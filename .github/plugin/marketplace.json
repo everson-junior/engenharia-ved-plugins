@@ -14,6 +14,7 @@
 			"source": "./plugins/engenharia/poui",
 			"description": "Transforma o VS Code em uma esteira guiada com duas frentes complementares: uma para acelerar a criação e evolução de projetos PO UI",
 			"version": "0.0.1",
+			"icon": "./plugins/engenharia/poui/assets/icon.png",
 			"skills": [
 				"./plugins/engenharia/poui/skills/api-design",
 				"./plugins/engenharia/poui/skills/poui-modal-password-recovery",

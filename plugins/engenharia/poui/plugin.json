@@ -4,6 +4,7 @@
 	"description": "Angular + PO UI com mais velocidade e opere Harness, contexto e automações com mais controle no ecossistema TOTVS/Protheus.",
 	"version": "0.0.1",
 	"license": "MIT",
+	"icon": "./assets/icon.png",
 	"author": "Engenharia V&D",
 	"keywords": [
 			"poui",
