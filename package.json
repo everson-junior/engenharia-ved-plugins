@@ -1,0 +1,21 @@
+{
+  "name": "engenharia-ved-plugins",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/everson-junior/engenharia-ved-plugins.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/everson-junior/engenharia-ved-plugins/issues"
+  },
+  "homepage": "https://github.com/everson-junior/engenharia-ved-plugins#readme"
+}
