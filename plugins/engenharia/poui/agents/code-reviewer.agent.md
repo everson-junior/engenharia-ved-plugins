@@ -7,6 +7,7 @@ phases: [R, V]
 generated: 2026-03-18
 status: filled
 scaffoldVersion: "2.0.0"
+tools: [vscode, read, agent, ms-azuretools.vscode-containers, ms-python.python, vscjava.vscode-java-debug, vscjava.vscode-java-dependency, search, web, browser, todo]
 ---
 ## Mission
 
@@ -104,11 +105,11 @@ This agent reviews code changes for quality, consistency, and adherence to proje
 
 ## Hand-off Notes
 
-Após concluir o trabalho, registrar aqui:
-- Alterações realizadas e arquivos modificados
-- Riscos identificados ou dívidas técnicas
-- Próximos passos sugeridos
-- Pontos de atenção PO UI (props descontinuadas, módulos faltantes, etc.)
+Apï¿½s concluir o trabalho, registrar aqui:
+- Alteraï¿½ï¿½es realizadas e arquivos modificados
+- Riscos identificados ou dï¿½vidas tï¿½cnicas
+- Prï¿½ximos passos sugeridos
+- Pontos de atenï¿½ï¿½o PO UI (props descontinuadas, mï¿½dulos faltantes, etc.)
 
 ## Related Resources
 
