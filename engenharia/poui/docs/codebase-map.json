@@ -1,0 +1,284 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-03-18T18:54:21.397Z",
+  "stack": {
+    "primaryLanguage": "typescript",
+    "languages": [
+      "javascript",
+      "typescript"
+    ],
+    "frameworks": [
+      "angular"
+    ],
+    "buildTools": [],
+    "testFrameworks": [],
+    "packageManager": "npm",
+    "isMonorepo": false,
+    "hasDocker": false,
+    "hasCI": false,
+    "runtimeEnvironment": "browser"
+  },
+  "structure": {
+    "totalFiles": 31,
+    "rootPath": ".",
+    "topDirectories": [
+      {
+        "name": "public",
+        "fileCount": 1,
+        "description": "Public static assets"
+      },
+      {
+        "name": "src",
+        "fileCount": 21,
+        "description": "Source code root"
+      }
+    ],
+    "languageDistribution": [
+      {
+        "extension": ".ts",
+        "count": 13
+      },
+      {
+        "extension": ".json",
+        "count": 7
+      },
+      {
+        "extension": ".css",
+        "count": 3
+      },
+      {
+        "extension": ".html",
+        "count": 3
+      },
+      {
+        "extension": ".md",
+        "count": 2
+      },
+      {
+        "extension": ".js",
+        "count": 1
+      },
+      {
+        "extension": ".ico",
+        "count": 1
+      },
+      {
+        "extension": ".png",
+        "count": 1
+      }
+    ]
+  },
+  "architecture": {
+    "layers": [
+      {
+        "name": "Components",
+        "description": "UI components and views",
+        "directories": [
+          "src\\app",
+          "src\\app\\home"
+        ],
+        "symbolCount": 2,
+        "dependsOn": []
+      },
+      {
+        "name": "Services",
+        "description": "Business logic and orchestration",
+        "directories": [
+          "src\\app\\services"
+        ],
+        "symbolCount": 1,
+        "dependsOn": []
+      },
+      {
+        "name": "Utils",
+        "description": "Shared utilities and helpers",
+        "directories": [
+          "src\\app\\modules\\lib-core-dev"
+        ],
+        "symbolCount": 1,
+        "dependsOn": [
+          "Services"
+        ]
+      }
+    ],
+    "patterns": [
+      {
+        "name": "Service Layer",
+        "confidence": 0.85,
+        "description": "Encapsulates business logic in service classes",
+        "occurrences": 1
+      }
+    ],
+    "entryPoints": [
+      "src\\main.ts"
+    ],
+    "mainEntryPoints": [
+      "src\\main.ts"
+    ],
+    "moduleExports": []
+  },
+  "symbols": {
+    "classes": [
+      {
+        "name": "AppComponent",
+        "kind": "class",
+        "file": "src\\app\\app.component.ts",
+        "line": 27,
+        "exported": true
+      },
+      {
+        "name": "HomeComponent",
+        "kind": "class",
+        "file": "src\\app\\home\\home.component.ts",
+        "line": 27,
+        "exported": true
+      },
+      {
+        "name": "LibCoreDevInterceptorService",
+        "kind": "class",
+        "file": "src\\app\\services\\lib-core-dev-interceptor.service.ts",
+        "line": 10,
+        "exported": true
+      },
+      {
+        "name": "LibCoreDevModule",
+        "kind": "class",
+        "file": "src\\app\\modules\\lib-core-dev\\lib-core-dev.module.ts",
+        "line": 20,
+        "exported": true
+      }
+    ],
+    "interfaces": [],
+    "functions": [],
+    "types": [],
+    "enums": []
+  },
+  "publicAPI": [
+    {
+      "name": "AppComponent",
+      "kind": "class",
+      "file": "src\\app\\app.component.ts",
+      "line": 27,
+      "exported": true
+    },
+    {
+      "name": "HomeComponent",
+      "kind": "class",
+      "file": "src\\app\\home\\home.component.ts",
+      "line": 27,
+      "exported": true
+    },
+    {
+      "name": "LibCoreDevInterceptorService",
+      "kind": "class",
+      "file": "src\\app\\services\\lib-core-dev-interceptor.service.ts",
+      "line": 10,
+      "exported": true
+    },
+    {
+      "name": "LibCoreDevModule",
+      "kind": "class",
+      "file": "src\\app\\modules\\lib-core-dev\\lib-core-dev.module.ts",
+      "line": 20,
+      "exported": true
+    }
+  ],
+  "dependencies": {
+    "mostImported": [
+      {
+        "file": "src\\app\\app.component.ts",
+        "importedBy": 2,
+        "description": "Application entry (Next.js app router)"
+      },
+      {
+        "file": "src\\app\\services\\lib-core-dev-interceptor.service.ts",
+        "importedBy": 2,
+        "description": "Business logic and orchestration services"
+      },
+      {
+        "file": "src\\app\\app.config.ts",
+        "importedBy": 1,
+        "description": "Application entry (Next.js app router)"
+      },
+      {
+        "file": "src\\app\\app-initializer.ts",
+        "importedBy": 1,
+        "description": "Application entry (Next.js app router)"
+      },
+      {
+        "file": "src\\environments\\environment.local.ts",
+        "importedBy": 1
+      },
+      {
+        "file": "src\\app\\home\\home.component.ts",
+        "importedBy": 1
+      },
+      {
+        "file": "src\\app\\app.routes.ts",
+        "importedBy": 1,
+        "description": "Application entry (Next.js app router)"
+      },
+      {
+        "file": "src\\environments\\environment.ts",
+        "importedBy": 1
+      },
+      {
+        "file": "src\\app\\modules\\lib-core-dev\\lib-core-dev.module.ts",
+        "importedBy": 1
+      },
+      {
+        "file": "src\\environments\\environment.development.ts",
+        "importedBy": 1
+      }
+    ]
+  },
+  "stats": {
+    "totalSymbols": 4,
+    "exportedSymbols": 4,
+    "analysisTimeMs": 289
+  },
+  "keyFiles": [
+    {
+      "path": "src\\main.ts",
+      "description": "Source code root",
+      "category": "entrypoint"
+    },
+    {
+      "path": "package.json",
+      "description": "Package manifest",
+      "category": "config"
+    },
+    {
+      "path": "src\\app\\app.config.ts",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "tsconfig.app.json",
+      "description": "TypeScript configuration",
+      "category": "config"
+    },
+    {
+      "path": "tsconfig.json",
+      "description": "TypeScript configuration",
+      "category": "config"
+    },
+    {
+      "path": "tsconfig.spec.json",
+      "description": "TypeScript configuration",
+      "category": "config"
+    }
+  ],
+  "navigation": {
+    "tests": "**/*.spec.ts",
+    "config": [
+      "package.json",
+      "tsconfig.json",
+      "tsconfig.*.json"
+    ],
+    "types": [],
+    "mainLogic": [
+      "src"
+    ]
+  }
+}
