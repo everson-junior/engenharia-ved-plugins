@@ -1,7 +1,7 @@
 {
-	"name": "poui",
+	"name": "engenharia-ved-plugins",
 	"metadata": {
-		"description": "Angular + PO UI com mais velocidade e opere Harness, contexto e automações com mais controle no ecossistema TOTVS/Protheus.",
+		"description": "marketplace para o ecossistema TOTVS/V&D.",
 		"version": "0.0.1"
 	},
 	"owner": {
