@@ -29,10 +29,24 @@
 			"./plugins/engenharia/poui/skills/poui-page-job-scheduler",
 			"./plugins/engenharia/poui/skills/poui-page-login",
 			"./plugins/engenharia/poui/skills/poui-templates-overview",
-			"./plugins/engenharia/poui/skills/poui-templates-utils"
+			"./plugins/engenharia/poui/skills/poui-templates-utils",
+			"./plugins/engenharia/poui/skills/create-project"
 		],
 		"agents": [
-			"./plugins/engenharia/poui/agents/poui-context.agent.md"
+			"./plugins/engenharia/poui/agents/architect-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/bug-fixer.agent.md",
+			"./plugins/engenharia/poui/agents/code-reviewer.agent.md",
+			"./plugins/engenharia/poui/agents/devops-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/documentation-writer.agent.md",
+			"./plugins/engenharia/poui/agents/feature-developer.agent.md",
+			"./plugins/engenharia/poui/agents/frontend-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/performance-optimizer.agent.md",
+			"./plugins/engenharia/poui/agents/poui-context.agent.md",
+			"./plugins/engenharia/poui/agents/project-creator.agent.md",
+			"./plugins/engenharia/poui/agents/refactoring-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/security-auditor.agent.md",
+			"./plugins/engenharia/poui/agents/superpowers.agent.md",
+			"./plugins/engenharia/poui/agents/test-writer.agent.md"
 		],
 		"mcpServers": {},
 		"hooks": {},
