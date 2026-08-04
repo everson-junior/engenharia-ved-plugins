@@ -7,9 +7,9 @@
  * com templates automáticos.
  * 
  * Responsabilidades:
- * - Importar serviços da extensão (createProjectWithTemplates, VsCodeTemplateAdapter)
- * - Inicializar template service com extensionPath
- * - Executar orquestração de 13 passos sem prompts interativos
+ * - Delegar para o comando público extension-eng-ved.createProject
+ * - Encaminhar opções para runCreateProjectCommand na extensão hospedeira
+ * - Reportar a aceitação do comando e seus erros
  * - Reportar progresso e erros
  * 
  * @version 1.0.0
@@ -68,7 +68,8 @@ function getExtensionOrThrow(): vscode.Extension<unknown> {
   return extension;
 }
 
-async function executeCreateProjectCommand(
+/** Delega a criação para runCreateProjectCommand na extensão Eng-VeD. */
+export async function executeCreateProjectCommand(
   args?: CreateProjectCommandArgs
 ): Promise<unknown> {
   const extension = getExtensionOrThrow();
@@ -77,10 +78,7 @@ async function executeCreateProjectCommand(
     await extension.activate();
   }
 
-  return vscode.commands.executeCommand(
-    CREATE_PROJECT_COMMAND,
-    args && Object.keys(args).length > 0 ? args : undefined
-  );
+  return vscode.commands.executeCommand(CREATE_PROJECT_COMMAND, args);
 }
 
 function isCreateProjectRequest(request: vscode.ChatRequest): boolean {
@@ -124,11 +122,10 @@ export function registerChatParticipant(context: vscode.ExtensionContext): vscod
  * 
  * Workflow:
  * 1. Valida configuração de entrada
- * 2. Obtém referência à extensão extension-eng-ved
- * 3. Inicializa VsCodeTemplateAdapter com extensionPath
- * 4. Carrega e valida templates
- * 5. Executa createProjectWithTemplates() com injeção de templateService
- * 6. Retorna resultado com path do projeto criado
+ * 2. Obtém e ativa a extensão Eng-VeD
+ * 3. Executa extension-eng-ved.createProject
+ * 4. A extensão hospedeira executa runCreateProjectCommand e os 13 passos
+ * 5. Retorna a aceitação ou o erro do comando
  * 
  * @param config Configuração de criação do projeto
  * @param onProgress Callback para reportar progresso (step/total/message)

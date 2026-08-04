@@ -29,10 +29,10 @@ Quando a intenção vier do participante de chat, o plugin não recria o fluxo d
 
 1. Verificar `vscode.extensions.getExtension('totvs.extension-eng-ved')`.
 2. Ativar a extensão se necessário com `extension.activate()`.
-3. Executar `await vscode.commands.executeCommand('extension-eng-ved.createProject')`.
+3. Executar `await vscode.commands.executeCommand('extension-eng-ved.createProject', options?)`.
 4. Reportar no stream que o assistente foi iniciado ou exibir o erro retornado.
 
-O comando abre a coleta de nome/local e executa os 13 passos na extensão Eng-VeD. Parâmetros opcionais podem ser enviados como segundo argumento:
+O comando abre a coleta de nome/local quando não recebe parâmetros e executa os 13 passos na extensão Eng-VeD. Quando os dados já estiverem disponíveis, envie o objeto de opções como segundo argumento:
 
 ```typescript
 await vscode.commands.executeCommand('extension-eng-ved.createProject', {
@@ -41,6 +41,8 @@ await vscode.commands.executeCommand('extension-eng-ved.createProject', {
   cliVersions: { angular: '21', poUi: '21' }
 });
 ```
+
+O objeto é consumido por `src/extension.ts` da extensão hospedeira, que chama `runCreateProjectCommand(context, options.projectName, options.parentPath)`. Não implemente `ng new`, `npm install`, cópia de templates ou `createProjectCore` no plugin.
 
 O registrador correspondente está em `src/extension-integration.ts`, na função `registerChatParticipant(context)`. A extensão hospedeira deve chamar essa função durante a ativação.
 
@@ -123,9 +125,9 @@ Solicitar informações via diálogos VS Code (`vscode.window.showInputBox()` e 
 
 ---
 
-### Etapa 3: Invocar Agente `project-creator`
+### Etapa 3: Invocar o comando oficial da extensão
 
-Com inputs validados, invocar o agente para orquestrar os 13 passos:
+Com os inputs validados, o agente deve apenas delegar a criação para a extensão Eng-VeD. Ele não deve orquestrar os 13 passos nem executar comandos locais:
 
 **Instruções ao Copilot (como contexto para o agente):**
 ```
@@ -137,24 +139,15 @@ Agente project-creator, inicie a criação de projeto com os seguintes parâmetr
 - cliVersions: { angular: "21", poUi: "21" }
 
 🚀 Tarefa:
-Execute os 13 passos de criação do projeto Angular PO UI:
-1. Criar estrutura com Angular CLI
-2. Inicializar repositório Git
-3. Instalar componentes PO UI
-4. Instalar templates PO UI
-5. Gerar environments
-6. Criar módulo de desenvolvimento
-7. Criar service interceptor
-8. Copiar assets Eng-VeD
-9. Patchar dependências
-10. Instalar npm packages
-11. Configurar angular.json
-12. Configurar Copilot skills
-13. Renomear arquivos de agentes
+Execute apenas:
+await vscode.commands.executeCommand('extension-eng-ved.createProject', {
+  projectName: "${projectName}",
+  parentPath: "${parentPath}",
+  cliVersions: { angular: "21", poUi: "21" }
+});
 
-⏳ Reporte progresso a cada etapa com vscode.window.withProgress().
-📊 Se alguma etapa falhar, capture o erro específico e reporte.
-✅ Ao final, valide que o projeto foi criado corretamente.
+Não execute ng, npm, git, cópia de templates ou createProjectCore no plugin.
+Reporte que o assistente oficial foi iniciado e deixe a extensão Eng-VeD reportar o progresso dos 13 passos.
 ```
 
 **Parâmetros Passados:**
@@ -227,14 +220,14 @@ Você pode:
 
 ---
 
-## CLI Automation (100% Non-Interactive)
+## CLI Automation da Extensão (100% Non-Interactive)
 
-Esta skill utiliza **flags CLI** e **variáveis de ambiente** para garantir execução 100% automatizada, sem prompts interativos. Isso é essencial para:
+A extensão Eng-VeD utiliza **flags CLI** e **variáveis de ambiente** para garantir execução automatizada. O plugin apenas dispara `extension-eng-ved.createProject`; ele não executa nenhum comando CLI diretamente. Isso é essencial para:
 - Execução via Copilot Agent/Skill
 - CI/CD pipelines
 - Scripts de automação
 
-### Environment Variables Aplicadas
+### Environment Variables Aplicadas pela Extensão
 
 Todas as variáveis abaixo são injetadas em CADA comando CLI:
 
@@ -249,7 +242,7 @@ const CLI_AUTOMATION_ENV = {
 };
 ```
 
-### Flags CLI por Comando
+### Flags CLI por Comando da Extensão
 
 | Passo | Comando | Flags de Automação | Propósito |
 |-------|---------|-------------------|-----------|
@@ -261,30 +254,22 @@ const CLI_AUTOMATION_ENV = {
 | 7 | `ng generate service` | `--skip-tests` | Pular criação de spec file |
 | 9 | `npm install` | `--legacy-peer-deps --no-fund --no-audit` | Suprimir warnings e prompts |
 
-### Template Service (Obrigatório)
+### Templates sob responsabilidade da extensão
 
-A skill utiliza `ITemplateService` para garantir uso obrigatório dos templates da extensão `.vsix`:
+A skill não instancia `ITemplateService` nem acessa templates. A extensão Eng-VeD carrega e valida os templates do `.vsix` dentro de `runCreateProjectCommand`:
 
 ```typescript
-// Plugin externo acessa templates via serviço injetado
-const templateService = new VsCodeTemplateAdapter();
-await templateService.loadTemplates(extensionContext.extensionPath);
-await templateService.validateTemplates(); // Falha rápido se template faltar
-
-const result = await createProjectWithTemplates({
+await vscode.commands.executeCommand('extension-eng-ved.createProject', {
   projectName,
   parentPath,
-  extensionPath: extensionContext.extensionPath,
-  templateService, // ← Injeção obrigatória
   cliVersions: { angular: '21', poUi: '21' }
 });
 ```
 
 **Benefícios da Arquitetura**:
-- Templates sempre carregados da extensão `.vsix` (garantia de consistência)
-- Validação antes de execução (fail fast)
-- Dependency injection permite testing/mocking
-- Plugin externo não acessa `context` diretamente
+- Templates sempre carregados pela extensão `.vsix`
+- Validação e orquestração centralizadas em `runCreateProjectCommand`
+- Plugin externo não acessa `context` nem reimplementa `createProjectCore`
 
 ---
 
@@ -503,7 +488,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 ## Extension Integration (v0.0.2+)
 
-A partir da **v0.0.2**, a skill utiliza integração com a extensão `extension-eng-ved` para garantir uso obrigatório dos **25 templates** do `.vsix` e **100% automação CLI** sem prompts interativos.
+A partir da **v0.0.2**, a skill delega a criação ao comando `extension-eng-ved.createProject` da extensão `totvs.extension-eng-ved`. A extensão hospedeira garante o uso dos templates do `.vsix` e a automação CLI.
 
 ### Arquitetura de Integração
 
@@ -511,17 +496,11 @@ A partir da **v0.0.2**, a skill utiliza integração com a extensão `extension-
 PLUGIN EXTERNO                          EXTENSÃO .VSIX
 (.vscode/agent-plugins/poui/)           (vscode-extension-ai-poui/)
          │
-         ├─ SKILL.md                     ├─ ITemplateService (interface)
+         ├─ SKILL.md                     ├─ runCreateProjectCommand()
          ├─ project-creator.agent.md     │   
-         └─ src/extension-integration.ts ├─ VsCodeTemplateAdapter
-                 │                       │   ├─ loadTemplates()
-                 └────imports────────→   │   ├─ validateTemplates()
-                                        │   ├─ applyProjectName()
-                                        │   └─ getTemplateMapping()
-                                        │
-                                        ├─ ProjectCreationOrchestrator
-                                        │   └─ createProjectWithTemplates()
-                                        │       (13 passos automáticos)
+         └─ src/extension-integration.ts ├─ createProjectCore()
+           │                       │   (orquestração interna)
+           └──executeCommand─────→ │   extension-eng-ved.createProject
                                         │
                                         └─ Templates (25 arquivos)
                                             ├─ app.component.ts.template

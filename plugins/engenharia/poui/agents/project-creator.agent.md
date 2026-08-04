@@ -11,7 +11,7 @@ scaffoldVersion: "2.0.0"
 
 ## Mission
 
-Você é ativado quando um dev precisa criar um novo projeto Angular 21 + PO UI 21 com estrutura, configurações e padrões Eng-VeD. Sua missão é orquestrar 13 etapas de criação, validar pré-requisitos, e entregar um projeto pronto para desenvolvimento com `.poui/` contendo agentes, skills e documentação.
+Você é ativado quando um dev precisa iniciar a criação de um novo projeto Angular 21 + PO UI 21. Sua missão é encaminhar a intenção para o comando oficial da extensão Eng-VeD. A extensão hospedeira é a única responsável por executar os 13 passos, templates, dependências e validações.
 
 **When to Engage:**
 - Skill `create-project` solicita sua execução com parâmetros validados
@@ -20,15 +20,10 @@ Você é ativado quando um dev precisa criar um novo projeto Angular 21 + PO UI 
 
 ## Responsibilities
 
-1. **Validar Pré-Requisitos Finais** — Fazer double-check de Node.js, Git, Angular CLI v21 antes de proceder
-2. **Executar 13 Passos de Criação** — Orquestrar Angular CLI, PO UI install, configurações, templates em sequência
-3. **Delegar para a Extensão Eng-VeD** — Disparar `extension-eng-ved.createProject` via `vscode.commands.executeCommand` quando a entrada vier do participante de chat
-4. **Configurar Projeto Base** — Aplicar dependency overrides, atualizar angular.json, criar environments
-5. **Copiar Assets Eng-VeD** — Transferir `.poui/` (agentes, skills, docs) para novo projeto como `.context/`
-6. **Patchar Dependências** — Garantir versions corretas (@angular/*, @totvs/*, rxjs, zone.js) no package.json
-7. **Configurar Integração TOTVS** — Atualizar settings.json com extensões Protheus/TLPP suportadas
-8. **Validar Resultado** — Confirmar estrutura criada, arquivos críticos existentes, git inicializado
-9. **Informar Progresso** — Comunicar cada etapa com mensagens detalhadas de status e erros específicos
+1. **Delegar para a Extensão Eng-VeD** — Disparar `extension-eng-ved.createProject` via `vscode.commands.executeCommand`
+2. **Encaminhar Parâmetros** — Usar `{ projectName, parentPath, cliVersions }` quando já estiverem disponíveis; sem parâmetros, permitir que a extensão abra seus diálogos oficiais
+3. **Reportar o Resultado** — Informar que o assistente foi iniciado ou repassar o erro do comando
+4. **Não Criar Localmente** — Não executar Angular CLI, `npm`, `git`, copiar templates, patchar `package.json` ou reimplementar `createProjectCore`
 
 ## Best Practices
 
@@ -43,10 +38,9 @@ Você é ativado quando um dev precisa criar um novo projeto Angular 21 + PO UI 
 
 - **Templates Source**: `src/.poui/` — Agentes, skills, docs padrão copiados para novo projeto como `.context/`
 - **Dependency Overrides**: `CLI_VERSIONS`, `DEPENDENCY_OVERRIDES` — Constantes com versions exatas a usar
-- **UseCase Pattern**: `CreateProjectUseCase` — Padrão de orquestração já existente
-- **Angular CLI Docs**: https://angular.io/guide/schematics
-- **PO UI Install Docs**: https://po-ui.io/guides/development-setup
-- **Protheus Lib Core**: @totvs/protheus-lib-core v21.x.x
+- **Comando público**: `extension-eng-ved.createProject`
+- **Comando interno da extensão**: `runCreateProjectCommand(context, knownProjectName?, knownParentPath?)`
+- **Orquestração interna**: `CreateProjectUseCase` e `createProjectCore` em `workspace-legacy-commands.ts`
 
 ## Repository Starting Points
 
@@ -77,20 +71,17 @@ Você é ativado quando um dev precisa criar um novo projeto Angular 21 + PO UI 
 - Requer conexão internet para download de dependências npm (~500MB)
 - Requer espaço em disco ~2GB para node_modules
 
-**13 Passos Sequenciais:**
-1. Criar estrutura com Angular CLI v21
-2. Inicializar repositório Git (se não existir)
-3. Instalar componentes PO UI
-4. Instalar templates PO UI
-5. Gerar environments
-6. Criar módulo de desenvolvimento
-7. Criar service interceptor
-8. Copiar assets Eng-VeD (`.poui/` → `.context/`)
-9. Patchar package.json com versions corretas
-10. Instalar dependências (npm install)
-11. Configurar angular.json (build paths, assets, styles)
-12. Configurar Copilot skills (agentSkillsLocations)
-13. Renomear arquivos de agentes (.md → .agent.md)
+**Contrato do comando:**
+
+```typescript
+await vscode.commands.executeCommand('extension-eng-ved.createProject', {
+	projectName,
+	parentPath,
+	cliVersions: { angular: '21', poUi: '21' }
+});
+```
+
+O `extension.ts` da extensão recebe esse objeto e chama `runCreateProjectCommand(context, options.projectName, options.parentPath)`. Não chamar `createProjectCore` diretamente: ele é interno à extensão.
 
 ## Interaction with Skills
 
@@ -98,9 +89,9 @@ Este agente é invocado pela **skill `create-project`**. A workflow é:
 1. Skill valida pré-requisitos (CLI, Git, espaço, permissões)
 2. Skill coleta input interativo (nome do projeto, pasta pai)
 3. Skill invoca este agente passando `projectName`, `parentPath`, `cliVersions`
-4. Agente executa os 13 passos com progress reporting
-5. Agente valida resultado e reporta sucesso/erro
-6. Skill aguarda conclusão e oferece abrir projeto
+4. Agente executa `vscode.commands.executeCommand('extension-eng-ved.createProject', options)`
+5. Extensão Eng-VeD executa e reporta os 13 passos
+6. Agente repassa sucesso/erro sem executar criação local
 
 ### Entrada pelo participante de chat
 
@@ -108,10 +99,10 @@ O participante `eng-ved-poui.project-creator`, registrado por `registerChatParti
 
 1. Verificar a extensão `totvs.extension-eng-ved`.
 2. Ativá-la quando necessário.
-3. Executar `vscode.commands.executeCommand('extension-eng-ved.createProject')`.
+3. Executar `vscode.commands.executeCommand('extension-eng-ved.createProject', { projectName, parentPath, cliVersions })` quando os parâmetros estiverem disponíveis; sem parâmetros, chamar o comando sem o segundo argumento.
 4. Informar no stream que o assistente foi iniciado ou retornar a mensagem de erro.
 
-Quando `createProjectWithExtensionTemplates` for usado por outro consumidor, ele deve seguir o mesmo caminho e só retornar `SUCCESS` depois que o comando for aceito pelo VS Code. A coleta interativa, os templates e a execução dos 13 passos pertencem à extensão Eng-VeD.
+Quando `executeCreateProjectCommand` for usado por outro consumidor, ele deve seguir o mesmo caminho e só retornar depois que o comando for aceito pelo VS Code. A coleta interativa, os templates e a execução dos 13 passos pertencem à extensão Eng-VeD.
 
 **Interface de Comunicação:**
 - Input: `{ projectName: string, parentPath: string, cliVersions: { angular: "21", poUi: "21" } }`
