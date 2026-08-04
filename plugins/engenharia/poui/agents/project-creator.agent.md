@@ -87,7 +87,7 @@ Este agente é invocado pela **skill `create-project`**. A workflow é:
 
 ### Entrada pelo participante de chat
 
-O participante `eng-ved-poui.project-creator`, registrado por `registerChatParticipant(context)`, é o ponto de entrada do Copilot para a intenção `criarProjeto` ou "criar projeto". Ele não implementa os 13 passos nem simula uma conclusão. O fluxo obrigatório é:
+O agent `project-creator` é o ponto de entrada do Copilot para a intenção `criarProjeto` ou "criar projeto". Ele não implementa os 13 passos nem simula uma conclusão. O fluxo obrigatório é:
 
 1. Verificar a extensão `totvs.extension-eng-ved`.
 2. Ativá-la quando necessário.

@@ -23,31 +23,18 @@
                                 ┌──────────────────▼──────────────────┐
                                 │   AGENT: project-creator            │
                                 │ ────────────────────────────────── │
-                                │  1. Imports handler                │
-                                │  2. Cria CreateProjectConfig       │
-                                │  3. Chama createProjectWithTemplates
-                                │  4. Mostra progress (13 steps)     │
-                                │  5. Abre em nova janela            │
-                                │  6. Configura pós-criação          │
+                                │  1. Verifica a extensão instalada │
+                                │  2. Ativa se necessário            │
+                                │  3. Executa comando sem argumentos │
+                                │  4. Aguarda os diálogos da extensão│
                                 └──────────────────┬──────────────────┘
                                                    │
                         ┌──────────────────────────▼───────────────────────┐
-                        │ HANDLER: extension-integration.ts               │
+                        │ EXTENSÃO HOSPEDEIRA: extension.ts               │
                         │ ─────────────────────────────────────────────── │
-                        │ exports:                                        │
-                        │  • createProjectWithExtensionTemplates()       │
-                        │  • openProjectInNewWindow()                    │
-                        │  • configureProjectAfterCreation()             │
-                        │  • validatePrerequisites()                     │
-                        │  • Types: Config, Result, Callback             │
-                        │                                                 │
-                        │ Workflow:                                       │
-                        │  1. Validate config                            │
-                        │  2. Get extension reference (TOTVS.extension-eng-ved)
-                        │  3. Activate if needed                         │
-                        │  4. Import services dynamically                │
-                        │  5. Execute 13 steps with progress             │
-                        │  6. Return result (SUCCESS|FAILED|CANCELLED)   │
+                        │  • Registra extension-eng-ved.createProject    │
+                        │  • Abre os diálogos oficiais do VS Code         │
+                        │  • Executa o terminal e os 13 passos            │
                         └──────────────────┬───────────────────────────────┘
                                            │
                         ┌──────────────────▼───────────────────────────────┐
@@ -165,24 +152,15 @@ User Input
     ↓
 @create-project
     ↓
-Skill validates (Node.js, Git, Angular CLI)
-    ↓
-Skill collects (projectName, parentPath)
-    ↓
-Agent: project-creator
-    ├─ imports extension-integration
-    ├─ creates CreateProjectConfig
-    ├─ calls createProjectWithExtensionTemplates()
-    │
-    ├─ reports progress [1-13]
-    │
-    └─ on SUCCESS:
-        ├─ openProjectInNewWindow()
-        ├─ configureProjectAfterCreation()
-        └─ show success message
-
-    └─ on FAILED:
-        └─ show error message
+  Agent: project-creator
+    ├─ verifica totvs.extension-eng-ved
+    ├─ ativa a extensão se necessário
+    └─ executa extension-eng-ved.createProject sem argumentos
+      ↓
+  Extensão hospedeira
+    ├─ mostra os diálogos do VS Code
+    ├─ executa os comandos no terminal
+    └─ conduz os 13 passos e reporta o resultado ao usuário
 ```
 
 ## Dependency Injection Pattern

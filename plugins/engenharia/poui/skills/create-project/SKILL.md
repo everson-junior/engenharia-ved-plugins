@@ -40,7 +40,7 @@ await vscode.commands.executeCommand('extension-eng-ved.createProject');
 
 Não implemente `ng new`, `npm install`, cópia de templates, coleta de inputs ou `createProjectCore` no plugin. A extensão hospedeira conduz os diálogos e o terminal.
 
-O registrador correspondente está em `src/extension-integration.ts`, na função `registerChatParticipant(context)`. A extensão hospedeira deve chamar essa função durante a ativação.
+O comando é registrado diretamente pela extensão hospedeira `totvs.extension-eng-ved`. O plugin não possui um entrypoint TypeScript próprio.
 
 ---
 
@@ -257,21 +257,17 @@ O VS Code solicitará nome, pasta e demais informações. A extensão executará
 ...
 ```
 
-### Exemplo 3: Participante de Chat e Comando da Extensão
+### Exemplo 3: Comando da Extensão
+
+O agent deve delegar diretamente para o comando público da extensão hospedeira:
 
 ```typescript
-// A extensão hospedeira registra o participante do plugin no activate.
-import * as vscode from 'vscode';
-import { registerChatParticipant } from '../src/extension-integration';
-
-export function activate(context: vscode.ExtensionContext): void {
-  registerChatParticipant(context);
-}
+await vscode.commands.executeCommand('extension-eng-ved.createProject');
 ```
 
 ---
 
-## Extension Integration (v0.0.2+)
+## Integração com a Extensão Hospedeira
 
 A partir da **v0.0.2**, a skill delega a criação ao comando `extension-eng-ved.createProject` da extensão `totvs.extension-eng-ved`. A extensão hospedeira garante o uso dos templates do `.vsix` e a automação CLI.
 
@@ -282,10 +278,9 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
 (.vscode/agent-plugins/poui/)           (vscode-extension-ai-poui/)
          │
          ├─ SKILL.md                     ├─ runCreateProjectCommand()
-         ├─ project-creator.agent.md     │   
-         └─ src/extension-integration.ts ├─ createProjectCore()
-           │                       │   (orquestração interna)
-           └──executeCommand─────→ │   extension-eng-ved.createProject
+         ├─ project-creator.agent.md     ├─ createProjectCore()
+         │                             │   (orquestração interna)
+         └──executeCommand───────────→ │   extension-eng-ved.createProject
                                         │
                                         └─ Templates (25 arquivos)
                                             ├─ app.component.ts.template
@@ -293,7 +288,7 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
                                             └─ ... (outros templates)
 ```
 
-### Como o Plugin Usa a Integração
+### Como o Plugin Dispara o Comando
 
 1. **Disparar o comando sem parâmetros**
    ```typescript
@@ -307,21 +302,7 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
    await vscode.commands.executeCommand('extension-eng-ved.createProject');
    ```
 
-2. **Deixar o usuário preencher os diálogos**
-   ```typescript
-   if (result.status === 'SUCCESS') {
-     // Abrir projeto em nova janela
-     await openProjectInNewWindow(result.projectPath!);
-     
-     vscode.window.showInformationMessage(
-       `✅ Projeto criado em ${result.projectPath}`
-     );
-   } else {
-     vscode.window.showErrorMessage(
-       `❌ Erro: ${result.message}`
-     );
-   }
-   ```
+2. **Deixar o usuário preencher os diálogos**. O comando abre os diálogos do VS Code e a extensão conduz a execução pelo terminal.
 
 ### Garantias da Integração
 
@@ -334,21 +315,6 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
 - 6 variáveis de ambiente aplicadas globalmente
 - Flags específicas para cada comando (--defaults, --skip-confirmation, etc)
 - Sem stdin piping, sem prompts user
-
-✅ **Type-Safe Interface**
-- `CreateProjectConfig`, `CreateProjectResult` interfaces
-- `ProgressCallback` type para callbacks de progresso
-- TypeScript compilation verificada
-
-### Arquivo de Integração
-
-📍 **Localização**: `.vscode/agent-plugins/github.com/everson-junior/engenharia-ved-plugins/plugins/engenharia/poui/src/extension-integration.ts`
-
-**Exports**:
-- `executeCreateProjectCommand()` - Verifica a extensão e dispara o comando sem argumentos
-- `openProjectInNewWindow()` - Abrir projeto em nova janela
-- `configureProjectAfterCreation()` - Setup pós-criação
-- Tipos: `CreateProjectConfig`, `CreateProjectResult`, `ProgressCallback`
 
 ---
 
