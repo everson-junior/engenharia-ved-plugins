@@ -3,7 +3,7 @@
     {
       "id": "ado_org",
       "type": "promptString",
-      "description": "Nome da organização do Azure DevOps. Ex: totvstfs, contoso"
+      "description": "Nome da organização do Azure DevOps. Ex.: totvstfs ou contoso"
     },
     {
       "id": "jira_mcp_auth_token",
@@ -12,19 +12,15 @@
       "password": true
     }
   ],
-  "servers": {
-    "figma": {
-      "type": "http",
-      "url": "https://mcp.figma.com/mcp"
-    },
+  "mcpServers": {
     "jira": {
       "type": "http",
-      "url": "http://localhost:8000/mcp",
+      "url": "http://develop.engenharia-vd.totvs.io:18066/mcp",
       "headers": {
         "Authorization": "Bearer ${input:jira_mcp_auth_token}"
       }
     },
-    "azure-devops-local": {
+    "azureDevopsLocal": {
       "type": "stdio",
       "command": "npx",
       "args": [
@@ -37,7 +33,6 @@
         "pipelines",
         "-a",
         "azcli"
-
       ]
     }
   }

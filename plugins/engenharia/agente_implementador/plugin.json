@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema",
-    "name": "agente_implementador",
+    "name": "agente-implementador",
     "description": "Agente que implementa issues do JIRA e realiza commits e PRs no respositório do Azure DevOps",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
     "icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
     "author": "Engenharia V&D",
@@ -14,54 +14,9 @@
         "Engenharia-ved",
         "v&D"
     ],
-    "skills": [
-        "./plugins/engenharia/agente_implementador/skills/ai-assisted-jira-flow",
-        "./plugins/engenharia/agente_implementador/skills/jira-attached-plan-flow",
-        "./plugins/engenharia/agente_implementador/skills/pr-validation-jira-azure-flow",
-        "./plugins/engenharia/agente_implementador/skills/superpowers"
-    ],
-    "agents": [
-        "./plugins/engenharia/agente_implementador/agents/jira-context-researcher.agent.md",
-        "./plugins/engenharia/agente_implementador/agents/jira-delivery-scribe.agent.md",
-        "./plugins/engenharia/agente_implementador/agents/jira-flow.agent.md"
-    ],
-    "inputs": [
-        {
-            "id": "ado_org",
-            "type": "promptString",
-            "description": "Nome da organização do Azure DevOps. Ex: totvstfs, contoso"
-        },
-        {
-            "id": "jira_mcp_auth_token",
-            "type": "promptString",
-            "description": "Token Bearer configurado em MCP_AUTH_TOKEN no servidor JIRA MCP",
-            "password": true
-        }
-    ],
-    "mcpServers": {
-        "jira": {
-            "type": "http",
-            "url": "http://develop.engenharia-vd.totvs.io:18066/mcp",
-            "headers": {
-                "Authorization": "Bearer ${input:jira_mcp_auth_token}"
-            }
-        },
-        "azure-devops-local": {
-            "type": "stdio",
-            "command": "npx",
-            "args": [
-                "-y",
-                "@azure-devops/mcp",
-                "${input:ado_org}",
-                "-d",
-                "core",
-                "repositories",
-                "pipelines",
-                "-a",
-                "azcli"
-            ]
-        }
-    },
+    "skills": "skills/",
+    "agents": "agents/",
+    "mcpServers": ".mcp.json",
     "hooks": {},
     "repository": "https://github.com/everson-junior/engenharia-ved-plugins"
 }
