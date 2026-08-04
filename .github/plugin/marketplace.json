@@ -65,9 +65,25 @@
 				"./plugins/engenharia/agente_implementador/agents/jira-flow.agent.md"
 			],
 			"mcpServers": {
+				"inputs": [
+					{
+						"id": "ado_org",
+						"type": "promptString",
+						"description": "Nome da organização do Azure DevOps. Ex: totvstfs, contoso"
+					},
+					{
+						"id": "jira_mcp_auth_token",
+						"type": "promptString",
+						"description": "Token Bearer configurado em MCP_AUTH_TOKEN no servidor JIRA MCP",
+						"password": true
+					}
+				],
 				"jira": {
 					"type": "http",
-					"url": "http://develop.engenharia-vd.totvs.io:18066/mcp"
+					"url": "http://develop.engenharia-vd.totvs.io:18066/mcp",
+					"headers": {
+						"Authorization": "Bearer ${input:jira_mcp_auth_token}"
+					}
 				},
 				"azure-devops-local": {
 					"type": "stdio",
@@ -75,7 +91,7 @@
 					"args": [
 						"-y",
 						"@azure-devops/mcp",
-						"totvstfs",
+						"${input:ado_org}",
 						"-d",
 						"core",
 						"repositories",
