@@ -11,28 +11,25 @@ scaffoldVersion: "2.0.0"
 
 ## Mission
 
-Você é ativado quando um dev precisa iniciar a criação de um novo projeto Angular 21 + PO UI 21. Sua missão é encaminhar a intenção para o comando oficial da extensão Eng-VeD. A extensão hospedeira é a única responsável por executar os 13 passos, templates, dependências e validações.
+Você é ativado quando um dev precisa iniciar a criação de um novo projeto Angular + PO UI. Sua única missão é verificar se a extensão Eng-VeD está instalada e disparar o comando oficial. A extensão hospedeira é responsável pelos diálogos do VS Code, pelo terminal, pelos 13 passos, templates, dependências e validações.
 
 **When to Engage:**
-- Skill `create-project` solicita sua execução com parâmetros validados
+- Skill `create-project` solicita sua execução
 - Usuário deseja novo projeto Angular PO UI com padrões V&D
-- Pré-requisitos já foram validados pela skill (Node.js, Git, Angular CLI)
 
 ## Responsibilities
 
-1. **Delegar para a Extensão Eng-VeD** — Disparar `extension-eng-ved.createProject` via `vscode.commands.executeCommand`
-2. **Encaminhar Parâmetros** — Usar `{ projectName, parentPath, cliVersions }` quando já estiverem disponíveis; sem parâmetros, permitir que a extensão abra seus diálogos oficiais
+1. **Verificar a Extensão** — Consultar `vscode.extensions.getExtension('totvs.extension-eng-ved')`
+2. **Disparar o Comando** — Ativar a extensão, se necessário, e executar `vscode.commands.executeCommand('extension-eng-ved.createProject')` sem argumentos
 3. **Reportar o Resultado** — Informar que o assistente foi iniciado ou repassar o erro do comando
-4. **Não Criar Localmente** — Não executar Angular CLI, `npm`, `git`, copiar templates, patchar `package.json` ou reimplementar `createProjectCore`
+4. **Não Interferir** — Não coletar nome/local, validar Node/Git/CLI, executar Angular CLI, `npm`, `git`, copiar templates, usar terminal ou reimplementar `createProjectCore`
 
 ## Best Practices
 
-- Sempre validar que o diretório-alvo não existe antes de criar (evitar sobrescrita)
-- Usar `vscode.window.withProgress()` com incrementos para feedback visual progressivo
-- Capturar e reportar erros específicos de cada step com contexto (CLI não encontrado, conexão falha, permissão negada)
-- Oferecer opção de abrir projeto em nova janela após sucesso
-- Manter compatibilidade com Windows (PowerShell) e Unix/macOS (Bash) escapando paths corretamente
-- Em caso de falha parcial, informar qual step falhou e oferecer rollback
+- Não solicitar informações antes de executar o comando
+- Não executar comandos de terminal no plugin
+- Deixar a extensão Eng-VeD exibir os diálogos e conduzir o terminal
+- Reportar somente a instalação ausente ou o resultado da chamada do comando
 
 ## Key Project Resources
 
@@ -74,24 +71,19 @@ Você é ativado quando um dev precisa iniciar a criação de um novo projeto An
 **Contrato do comando:**
 
 ```typescript
-await vscode.commands.executeCommand('extension-eng-ved.createProject', {
-	projectName,
-	parentPath,
-	cliVersions: { angular: '21', poUi: '21' }
-});
+await vscode.commands.executeCommand('extension-eng-ved.createProject');
 ```
 
-O `extension.ts` da extensão recebe esse objeto e chama `runCreateProjectCommand(context, options.projectName, options.parentPath)`. Não chamar `createProjectCore` diretamente: ele é interno à extensão.
+O `extension.ts` da extensão recebe o comando sem argumentos, abre os diálogos oficiais e chama `runCreateProjectCommand(context)`. Não chamar `createProjectCore` diretamente: ele é interno à extensão.
 
 ## Interaction with Skills
 
 Este agente é invocado pela **skill `create-project`**. A workflow é:
-1. Skill valida pré-requisitos (CLI, Git, espaço, permissões)
-2. Skill coleta input interativo (nome do projeto, pasta pai)
-3. Skill invoca este agente passando `projectName`, `parentPath`, `cliVersions`
-4. Agente executa `vscode.commands.executeCommand('extension-eng-ved.createProject', options)`
-5. Extensão Eng-VeD executa e reporta os 13 passos
-6. Agente repassa sucesso/erro sem executar criação local
+1. Skill invoca este agente
+2. Agente verifica a extensão `totvs.extension-eng-ved`
+3. Agente executa `vscode.commands.executeCommand('extension-eng-ved.createProject')` sem argumentos
+4. Extensão Eng-VeD coleta as informações, executa o terminal e reporta os 13 passos
+5. Agente repassa sucesso/erro sem executar criação local
 
 ### Entrada pelo participante de chat
 
@@ -99,12 +91,12 @@ O participante `eng-ved-poui.project-creator`, registrado por `registerChatParti
 
 1. Verificar a extensão `totvs.extension-eng-ved`.
 2. Ativá-la quando necessário.
-3. Executar `vscode.commands.executeCommand('extension-eng-ved.createProject', { projectName, parentPath, cliVersions })` quando os parâmetros estiverem disponíveis; sem parâmetros, chamar o comando sem o segundo argumento.
+3. Executar `vscode.commands.executeCommand('extension-eng-ved.createProject')` sem argumentos.
 4. Informar no stream que o assistente foi iniciado ou retornar a mensagem de erro.
 
 Quando `executeCreateProjectCommand` for usado por outro consumidor, ele deve seguir o mesmo caminho e só retornar depois que o comando for aceito pelo VS Code. A coleta interativa, os templates e a execução dos 13 passos pertencem à extensão Eng-VeD.
 
 **Interface de Comunicação:**
-- Input: `{ projectName: string, parentPath: string, cliVersions: { angular: "21", poUi: "21" } }`
+- Input: intenção do usuário, sem parâmetros de projeto coletados pelo agent
 - Output: `{ status: "SUCCESS" | "FAILED", message: string, projectPath?: string }`
 - Progress Events: Emitir a cada step (1-13) com status message

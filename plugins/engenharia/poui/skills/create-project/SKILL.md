@@ -29,20 +29,16 @@ Quando a intenção vier do participante de chat, o plugin não recria o fluxo d
 
 1. Verificar `vscode.extensions.getExtension('totvs.extension-eng-ved')`.
 2. Ativar a extensão se necessário com `extension.activate()`.
-3. Executar `await vscode.commands.executeCommand('extension-eng-ved.createProject', options?)`.
+3. Executar `await vscode.commands.executeCommand('extension-eng-ved.createProject')` sem argumentos.
 4. Reportar no stream que o assistente foi iniciado ou exibir o erro retornado.
 
-O comando abre a coleta de nome/local quando não recebe parâmetros e executa os 13 passos na extensão Eng-VeD. Quando os dados já estiverem disponíveis, envie o objeto de opções como segundo argumento:
+O comando abre a coleta de nome/local no VS Code e executa os 13 passos na extensão Eng-VeD. O usuário fornece as informações solicitadas pela extensão; o plugin não deve coletar nem validar esses dados.
 
 ```typescript
-await vscode.commands.executeCommand('extension-eng-ved.createProject', {
-  projectName,
-  parentPath,
-  cliVersions: { angular: '21', poUi: '21' }
-});
+await vscode.commands.executeCommand('extension-eng-ved.createProject');
 ```
 
-O objeto é consumido por `src/extension.ts` da extensão hospedeira, que chama `runCreateProjectCommand(context, options.projectName, options.parentPath)`. Não implemente `ng new`, `npm install`, cópia de templates ou `createProjectCore` no plugin.
+Não implemente `ng new`, `npm install`, cópia de templates, coleta de inputs ou `createProjectCore` no plugin. A extensão hospedeira conduz os diálogos e o terminal.
 
 O registrador correspondente está em `src/extension-integration.ts`, na função `registerChatParticipant(context)`. A extensão hospedeira deve chamar essa função durante a ativação.
 
@@ -50,173 +46,30 @@ O registrador correspondente está em `src/extension-integration.ts`, na funçã
 
 ## Instructions
 
-### Etapa 1: Validar Pré-Requisitos
+### Etapa 1: Invocar o comando oficial da extensão
 
-Antes de proceder com a criação, verifique se o usuário tem instalado e com versões corretas:
-
-**Checklist de Validação:**
-- ✓ Node.js 18+ (`node --version` → v18.x.x ou superior)
-- ✓ Git 2.30+ (`git --version` → git version 2.30+)
-- ✓ Angular CLI 21 (`ng version` → v21.x.x)
-- ✓ ~2GB espaço em disco livre (para node_modules + projeto)
-- ✓ Acesso escrita ao diretório onde criará projeto
-- ✓ Conexão internet disponível (para npm install de dependências)
-
-**Se faltar algo:**
-1. Identificar qual pré-requisito está faltando
-2. Instruir usuário a instalar:
-   - **Node.js**: Ir para https://nodejs.org/ (baixar LTS)
-   - **Git**: Ir para https://git-scm.com/ (instalar versão mais recente)
-   - **Angular CLI**: Executar no terminal: `npm install -g @angular/cli@21`
-3. **Abortar execução** se algum pré-requisito não for atendido
-
-**Mensagem se validação falhar:**
-```
-❌ Pré-requisitos não atendidos para criar projeto.
-
-Faltando: ${missingPrerequisites.join(', ')}
-
-Por favor, instale:
-- Node.js 18+: https://nodejs.org/
-- Git 2.30+: https://git-scm.com/
-- Angular CLI 21: npm install -g @angular/cli@21
-
-Tente novamente após instalar.
-```
-
----
-
-### Etapa 2: Coletar Inputs Interativos do Usuário
-
-Solicitar informações via diálogos VS Code (`vscode.window.showInputBox()` e `showOpenDialog()`):
-
-**2a) Nome do Projeto:**
-- Usar: `vscode.window.showInputBox()`
-- Prompt: `"Qual é o nome do projeto?"`
-- Placeholder: `"ex: meu-projeto-poui"`
-- Validação no input:
-  - Não pode ser vazio
-  - Sem caracteres especiais (apenas `[a-z0-9-]`)
-  - Sugestão: kebab-case (ex: `meu-projeto`, `app-core`, `dashboard-v2`)
-- Se usuário cancelar (retorna undefined): **Abortar skill**
-
-**2b) Caminho Pai (Diretório Pai):**
-- Usar: `vscode.window.showOpenDialog()`
-- Configuração:
-  ```javascript
-  {
-    canSelectMany: false,
-    canSelectFiles: false,
-    canSelectFolders: true,
-    openLabel: 'Selecione a pasta para criar o projeto'
-  }
-  ```
-- Validação:
-  - Diretório deve existir (não pode ser inválido)
-  - Deve ter permissão de escrita
-  - A pasta `${parentPath}/${projectName}` **não pode já existir**
-- Se usuário cancelar: **Abortar skill**
-- Se pasta-alvo já existe: 
-  ```
-  ❌ Erro: Pasta '${projectName}' já existe em '${parentPath}'.
-  
-  Por favor, escolha outro nome ou local.
-  ```
-
----
-
-### Etapa 3: Invocar o comando oficial da extensão
-
-Com os inputs validados, o agente deve apenas delegar a criação para a extensão Eng-VeD. Ele não deve orquestrar os 13 passos nem executar comandos locais:
+O agent deve apenas verificar a instalação da extensão e disparar o comando sem argumentos. A extensão Eng-VeD coleta todas as informações no VS Code e executa o fluxo pelo terminal:
 
 **Instruções ao Copilot (como contexto para o agente):**
 ```
-Agente project-creator, inicie a criação de projeto com os seguintes parâmetros:
+Agente project-creator, verifique se `totvs.extension-eng-ved` está instalada e execute apenas:
+await vscode.commands.executeCommand('extension-eng-ved.createProject');
 
-📋 Configuração:
-- projectName: "${projectName}"
-- parentPath: "${parentPath}"
-- cliVersions: { angular: "21", poUi: "21" }
-
-🚀 Tarefa:
-Execute apenas:
-await vscode.commands.executeCommand('extension-eng-ved.createProject', {
-  projectName: "${projectName}",
-  parentPath: "${parentPath}",
-  cliVersions: { angular: "21", poUi: "21" }
-});
-
-Não execute ng, npm, git, cópia de templates ou createProjectCore no plugin.
-Reporte que o assistente oficial foi iniciado e deixe a extensão Eng-VeD reportar o progresso dos 13 passos.
+Não colete informações, não valide Node/Git/CLI e não execute ng, npm, git, cópia de templates ou createProjectCore no plugin.
+Reporte que o assistente oficial foi iniciado e deixe o usuário preencher os diálogos da extensão.
 ```
-
-**Parâmetros Passados:**
-| Parâmetro | Tipo | Descrição |
-|-----------|------|-----------|
-| `projectName` | string | Nome do projeto (kebab-case) — ex: "meu-projeto" |
-| `parentPath` | string | Caminho absoluto da pasta pai — ex: "/Users/dev/projects" |
-| `cliVersions` | object | Versões Angular e PO UI — ex: `{ angular: "21", poUi: "21" }` |
 
 ---
 
-### Etapa 4: Validar Resultado da Criação
+### Etapa 2: Aguardar a extensão e o usuário
 
-Após agente reportar conclusão, validar que o projeto foi criado corretamente:
-
-**Success Validation Checklist:**
-- ✓ Pasta `${parentPath}/${projectName}` existe
-- ✓ Arquivo `${projectPath}/angular.json` existe
-- ✓ Pasta `${projectPath}/.context/` existe (com agentes, skills, docs)
-- ✓ Arquivo `${projectPath}/package.json` tem dependencies corretas (@angular/*, @totvs/*, @po-ui/*)
-- ✓ Arquivo `${projectPath}/src/assets/data/appConfig.json` existe
-- ✓ Repositório Git inicializado (`${projectPath}/.git` existe)
-
-**Se Validação OK:**
-```
-✓ Projeto '${projectName}' criado com sucesso em '${projectPath}'!
-
-Deseja abrir o novo projeto?
-[Sim]  [Não]
-```
-
-- **Sim**: Executar `vscode.commands.executeCommand('vscode.openFolder', projectUri, { forceNewWindow: true })`
-- **Não**: Encerrar skill
-
-**Se Validação Falhar:**
-```
-⚠️ Projeto criado, mas algumas validações falharam:
-
-Verificar:
-- Arquivo missing: ${missingFiles.join(', ')}
-- Estrutura incompleta em: ${incompleteDirectories.join(', ')}
-
-O projeto está em: ${projectPath}
-
-Você pode:
-1. Tentar corrigir manualmente
-2. Deletar a pasta e tentar novamente
-3. Abrir em VS Code para investigar
-```
-
-**Failure Scenarios (capturados do agente):**
-1. **CLI não encontrada**: "Angular CLI v21 não instalada. Instale: `npm install -g @angular/cli@21`"
-2. **Pasta pai não existe**: "Caminho pai inválido. Selecione pasta válida."
-3. **Diretório-alvo já existe**: "Pasta '${projectName}' já existe. Escolha outro nome."
-4. **Sem espaço em disco**: "Espaço em disco insuficiente (~2GB requerido). Libere espaço e tente novamente."
-5. **Git não disponível**: "Git não encontrado. Instale: https://git-scm.com/"
-6. **Sem permissão de escrita**: "Sem permissão de escrita em '${parentPath}'. Verifique permissões."
-7. **NPM install falhou**: "Falha ao instalar dependências npm. Verifique conexão internet."
-8. **Angular CLI falhou**: "Erro ao criar estrutura Angular. Mensagem: ${errorDetails}"
+Depois de disparar o comando, o agent não valida arquivos, não executa terminal e não realiza ações adicionais. A extensão Eng-VeD mostra os diálogos, executa os comandos no terminal e informa o resultado diretamente ao usuário.
 
 ---
 
 ## Input Parameters
 
-| Parâmetro | Tipo | Obrigatório | Descrição | Exemplo |
-|-----------|------|-------------|-----------|---------|
-| `projectName` | string | Sim | Nome do projeto (kebab-case, sem espaços) | `meu-projeto` |
-| `parentPath` | string | Sim | Caminho absoluto da pasta pai | `/Users/dev/workspace` ou `C:\Users\dev\projects` |
-| `cliVersions` | object | Sim | Versões Angular e PO UI | `{ angular: "21", poUi: "21" }` |
+Não há parâmetros de projeto para o agent. O usuário informa nome, pasta e demais opções nos diálogos exibidos pela extensão Eng-VeD.
 
 ---
 
@@ -259,11 +112,7 @@ const CLI_AUTOMATION_ENV = {
 A skill não instancia `ITemplateService` nem acessa templates. A extensão Eng-VeD carrega e valida os templates do `.vsix` dentro de `runCreateProjectCommand`:
 
 ```typescript
-await vscode.commands.executeCommand('extension-eng-ved.createProject', {
-  projectName,
-  parentPath,
-  cliVersions: { angular: '21', poUi: '21' }
-});
+await vscode.commands.executeCommand('extension-eng-ved.createProject');
 ```
 
 **Benefícios da Arquitetura**:
@@ -274,6 +123,8 @@ await vscode.commands.executeCommand('extension-eng-ved.createProject', {
 ---
 
 ## Output Validation
+
+A Skill não valida o resultado nem inspeciona arquivos. Depois do disparo, a extensão Eng-VeD conduz a criação e informa o resultado ao usuário.
 
 **Estrutura de Sucesso - Arquivo/Pastas Esperadas:**
 
@@ -338,40 +189,10 @@ novo-projeto/
 
 ## Templates / Checklist
 
-### 📋 Pré-Requisitos (antes de começar)
+### 📋 Responsabilidade da Extensão (antes de começar)
 
 ```markdown
-## Antes de Criar o Projeto
-
-Verifique se você tem instalado:
-
-- [ ] **Node.js 18+**
-  ```bash
-  node --version
-  # Deve mostrar: v18.x.x ou superior
-  ```
-  Instalar: https://nodejs.org/ (LTS recomendado)
-
-- [ ] **Git 2.30+**
-  ```bash
-  git --version
-  # Deve mostrar: git version 2.30+
-  ```
-  Instalar: https://git-scm.com/
-
-- [ ] **Angular CLI 21**
-  ```bash
-  ng version
-  # Deve mostrar: v21.x.x
-  ```
-  Instalar globalmente:
-  ```bash
-  npm install -g @angular/cli@21
-  ```
-
-- [ ] **Espaço em Disco**: ~2GB livre
-- [ ] **Conexão Internet**: Para download de dependências npm
-- [ ] **Permissões de Escrita**: No diretório onde criará o projeto
+O agent não valida esses itens. A extensão Eng-VeD executa as verificações necessárias depois que o usuário preencher os diálogos.
 ```
 
 ### 📊 O que o projeto terá após criação
@@ -406,46 +227,11 @@ Verifique se você tem instalado:
 ```
 User: @create-project
 
-Copilot: 
-📋 Validando pré-requisitos...
-✓ Node.js v18.20.0 encontrado
-✓ Git v2.45.0 encontrado
-✓ Angular CLI v21.2.0 encontrado
-✓ ~50GB espaço livre em disco
-✓ Conexão internet disponível
+Copilot:
+🔎 Verificando a extensão Eng-VeD...
+🚀 Iniciando o assistente oficial...
 
-Qual é o nome do projeto?
-[Input Box] > meu-projeto-poui
-
-Selecione a pasta para criar o projeto
-[File Dialog] > /Users/dev/workspace
-
-🚀 Iniciando criação do projeto...
-🔄 Invocando agente project-creator...
-
-[Progress: 1/13] Criando estrutura com Angular CLI...
-[Progress: 2/13] Inicializando repositório Git...
-[Progress: 3/13] Instalando componentes PO UI...
-[Progress: 4/13] Instalando templates PO UI...
-[Progress: 5/13] Gerando environments...
-[Progress: 6/13] Criando módulo de desenvolvimento...
-[Progress: 7/13] Criando service interceptor...
-[Progress: 8/13] Copiando assets Eng-VeD...
-[Progress: 9/13] Patchando dependências...
-[Progress: 10/13] Instalando npm packages...
-[Progress: 11/13] Configurando angular.json...
-[Progress: 12/13] Configurando Copilot skills...
-[Progress: 13/13] Renomeando arquivos de agentes...
-
-✓ Projeto 'meu-projeto-poui' criado com sucesso em /Users/dev/workspace/meu-projeto-poui!
-
-Deseja abrir o novo projeto?
-[Sim]  [Não]
-
-# Se Sim:
-Project opened in new VS Code window
-.context/agents/README.md ready to review
-.context/skills/ ready to use
+O VS Code solicitará nome, pasta e demais informações. A extensão executará o fluxo pelo terminal.
 ```
 
 ### Exemplo 2: Skill Invocada por Outro Agente
@@ -463,10 +249,9 @@ Project opened in new VS Code window
    Instruções ao Copilot:
    ```
    Invoke skill 'create-project':
-   - projectName: 'novo-projeto-angular'
-   - Aguarde conclusão
-   - Valide que .context/ foi criado
-   - Informe ao usuário sucesso
+  - Execute `extension-eng-ved.createProject` sem argumentos
+  - Aguarde o usuário preencher os diálogos da extensão
+  - Informe apenas se a extensão não estiver instalada ou se o comando falhar
    ```
 
 ...
@@ -510,45 +295,19 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
 
 ### Como o Plugin Usa a Integração
 
-1. **Importar Handler de Integração**
+1. **Disparar o comando sem parâmetros**
    ```typescript
-   import { 
-     createProjectWithExtensionTemplates,
-     validatePrerequisites,
-     openProjectInNewWindow
-   } from '../src/extension-integration';
-   ```
-
-2. **Validar Pré-Requisitos**
-   ```typescript
-   const missing = await validatePrerequisites();
-   if (missing.length > 0) {
-     vscode.window.showErrorMessage(
-       `Pré-requisitos faltando: ${missing.join(', ')}`
-     );
-     return;
+   const extension = vscode.extensions.getExtension('totvs.extension-eng-ved');
+   if (!extension) {
+     throw new Error('A extensão totvs.extension-eng-ved não está instalada.');
    }
+   if (!extension.isActive) {
+     await extension.activate();
+   }
+   await vscode.commands.executeCommand('extension-eng-ved.createProject');
    ```
 
-3. **Chamar Função de Criação com Callback**
-   ```typescript
-   const result = await createProjectWithExtensionTemplates({
-     projectName: 'meu-projeto',
-     parentPath: '/path/to/projects',
-     extensionPath: extensionContext.extensionPath, // Acesso aos templates
-     cliVersions: { angular: '21', poUi: '21' }
-   }, (step, total, message) => {
-     // Reportar progresso (1-13 passos)
-     console.log(`[${step}/${total}] ${message}`);
-     
-     // Atualizar progress bar no VS Code
-     vscode.window.showInformationMessage(
-       `[${step}/${total}] ${message}`
-     );
-   });
-   ```
-
-4. **Processar Resultado**
+2. **Deixar o usuário preencher os diálogos**
    ```typescript
    if (result.status === 'SUCCESS') {
      // Abrir projeto em nova janela
@@ -586,10 +345,9 @@ PLUGIN EXTERNO                          EXTENSÃO .VSIX
 📍 **Localização**: `.vscode/agent-plugins/github.com/everson-junior/engenharia-ved-plugins/plugins/engenharia/poui/src/extension-integration.ts`
 
 **Exports**:
-- `createProjectWithExtensionTemplates()` - Função principal
+- `executeCreateProjectCommand()` - Verifica a extensão e dispara o comando sem argumentos
 - `openProjectInNewWindow()` - Abrir projeto em nova janela
 - `configureProjectAfterCreation()` - Setup pós-criação
-- `validatePrerequisites()` - Validar Node.js, Git, Angular CLI
 - Tipos: `CreateProjectConfig`, `CreateProjectResult`, `ProgressCallback`
 
 ---

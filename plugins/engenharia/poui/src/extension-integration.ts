@@ -30,7 +30,6 @@ export interface CreateProjectConfig {
     poUi: string;
   };
 }
-
 /**
  * Interface de resultado da criação
  */
@@ -45,12 +44,6 @@ export interface CreateProjectResult {
  * Tipo para callback de progresso
  */
 export type ProgressCallback = (step: number, total: number, message: string) => void;
-
-export interface CreateProjectCommandArgs {
-  projectName?: string;
-  parentPath?: string;
-  cliVersions?: CreateProjectConfig['cliVersions'];
-}
 
 const EXTENSION_ID = 'totvs.extension-eng-ved';
 const CREATE_PROJECT_COMMAND = 'extension-eng-ved.createProject';
@@ -69,16 +62,14 @@ function getExtensionOrThrow(): vscode.Extension<unknown> {
 }
 
 /** Delega a criação para runCreateProjectCommand na extensão Eng-VeD. */
-export async function executeCreateProjectCommand(
-  args?: CreateProjectCommandArgs
-): Promise<unknown> {
+export async function executeCreateProjectCommand(): Promise<unknown> {
   const extension = getExtensionOrThrow();
 
   if (!extension.isActive) {
     await extension.activate();
   }
 
-  return vscode.commands.executeCommand(CREATE_PROJECT_COMMAND, args);
+  return vscode.commands.executeCommand(CREATE_PROJECT_COMMAND);
 }
 
 function isCreateProjectRequest(request: vscode.ChatRequest): boolean {
@@ -153,11 +144,7 @@ export async function createProjectWithExtensionTemplates(
     }
 
     onProgress?.(1, 13, 'Validando extensão Eng-VeD...');
-    await executeCreateProjectCommand({
-      projectName: config.projectName,
-      parentPath: config.parentPath,
-      cliVersions: config.cliVersions
-    });
+    await executeCreateProjectCommand();
     onProgress?.(13, 13, 'Comando de criação do projeto iniciado.');
 
     return {
@@ -224,43 +211,3 @@ export async function configureProjectAfterCreation(projectPath: string): Promis
   }
 }
 
-/**
- * Validar pré-requisitos antes de criar projeto
- * 
- * @returns Array de pré-requisitos faltando (vazio se tudo OK)
- */
-export async function validatePrerequisites(): Promise<string[]> {
-  const missing: string[] = [];
-
-  try {
-    // Validar Node.js
-    const nodeVersion = await vscode.commands.executeCommand('shellCommand.execute', {
-      command: 'node --version'
-    }) as string;
-    if (!nodeVersion.match(/v\d+/)) {
-      missing.push('Node.js 18+');
-    }
-
-    // Validar Git
-    const gitVersion = await vscode.commands.executeCommand('shellCommand.execute', {
-      command: 'git --version'
-    }) as string;
-    if (!gitVersion.includes('git version')) {
-      missing.push('Git 2.30+');
-    }
-
-    // Validar Angular CLI
-    const ngVersion = await vscode.commands.executeCommand('shellCommand.execute', {
-      command: 'ng version'
-    }) as string;
-    if (!ngVersion.match(/Angular CLI.*21/)) {
-      missing.push('Angular CLI 21');
-    }
-
-  } catch (error) {
-    // Se comando shell falhar, assumir que ferramenta não está instalada
-    missing.push('Node.js 18+', 'Git 2.30+', 'Angular CLI 21');
-  }
-
-  return missing;
-}
