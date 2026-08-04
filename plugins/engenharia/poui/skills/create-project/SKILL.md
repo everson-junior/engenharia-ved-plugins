@@ -205,6 +205,67 @@ Você pode:
 
 ---
 
+## CLI Automation (100% Non-Interactive)
+
+Esta skill utiliza **flags CLI** e **variáveis de ambiente** para garantir execução 100% automatizada, sem prompts interativos. Isso é essencial para:
+- Execução via Copilot Agent/Skill
+- CI/CD pipelines
+- Scripts de automação
+
+### Environment Variables Aplicadas
+
+Todas as variáveis abaixo são injetadas em CADA comando CLI:
+
+```typescript
+const CLI_AUTOMATION_ENV = {
+  'NG_CLI_ANALYTICS': 'ci',           // Suprimir prompt de analytics Angular
+  'CI': 'true',                        // Indicador genérico de ambiente CI
+  'FORCE_COLOR': '0',                  // Desabilitar cores para logs limpos
+  'npm_config_update_notifier': 'false', // Suprimir notificador npm
+  'npm_config_fund': 'false',          // Suprimir mensagens de funding
+  'npm_config_audit': 'false',         // Suprimir warnings de audit
+};
+```
+
+### Flags CLI por Comando
+
+| Passo | Comando | Flags de Automação | Propósito |
+|-------|---------|-------------------|-----------|
+| 1 | `ng new` | `--skip-install --ssr=false --package-manager=npm` | Pular install, desabilitar SSR |
+| 3 | `ng add @po-ui/ng-components` | `--skip-confirmation --defaults` | Aceitar defaults automaticamente |
+| 4 | `ng add @po-ui/ng-templates` | `--skip-confirmation --defaults` | Aceitar defaults automaticamente |
+| 5 | `ng generate environments` | `--defaults` | Usar configuração padrão |
+| 6 | `ng generate module` | `--flat=false` | Criar em subpasta |
+| 7 | `ng generate service` | `--skip-tests` | Pular criação de spec file |
+| 9 | `npm install` | `--legacy-peer-deps --no-fund --no-audit` | Suprimir warnings e prompts |
+
+### Template Service (Obrigatório)
+
+A skill utiliza `ITemplateService` para garantir uso obrigatório dos templates da extensão `.vsix`:
+
+```typescript
+// Plugin externo acessa templates via serviço injetado
+const templateService = new VsCodeTemplateAdapter();
+await templateService.loadTemplates(extensionContext.extensionPath);
+await templateService.validateTemplates(); // Falha rápido se template faltar
+
+const result = await createProjectWithTemplates({
+  projectName,
+  parentPath,
+  extensionPath: extensionContext.extensionPath,
+  templateService, // ← Injeção obrigatória
+  cliVersions: { angular: '21', poUi: '21' }
+});
+```
+
+**Benefícios da Arquitetura**:
+- Templates sempre carregados da extensão `.vsix` (garantia de consistência)
+- Validação antes de execução (fail fast)
+- Dependency injection permite testing/mocking
+- Plugin externo não acessa `context` diretamente
+
+---
+
 ## Output Validation
 
 **Estrutura de Sucesso - Arquivo/Pastas Esperadas:**
@@ -420,6 +481,120 @@ vscode.commands.registerCommand('extension-eng-ved.createProject', async () => {
   // await invokeSkill('create-project');
 });
 ```
+
+---
+
+## Extension Integration (v0.0.2+)
+
+A partir da **v0.0.2**, a skill utiliza integração com a extensão `extension-eng-ved` para garantir uso obrigatório dos **25 templates** do `.vsix` e **100% automação CLI** sem prompts interativos.
+
+### Arquitetura de Integração
+
+```
+PLUGIN EXTERNO                          EXTENSÃO .VSIX
+(.vscode/agent-plugins/poui/)           (vscode-extension-ai-poui/)
+         │
+         ├─ SKILL.md                     ├─ ITemplateService (interface)
+         ├─ project-creator.agent.md     │   
+         └─ src/extension-integration.ts ├─ VsCodeTemplateAdapter
+                 │                       │   ├─ loadTemplates()
+                 └────imports────────→   │   ├─ validateTemplates()
+                                        │   ├─ applyProjectName()
+                                        │   └─ getTemplateMapping()
+                                        │
+                                        ├─ ProjectCreationOrchestrator
+                                        │   └─ createProjectWithTemplates()
+                                        │       (13 passos automáticos)
+                                        │
+                                        └─ Templates (25 arquivos)
+                                            ├─ app.component.ts.template
+                                            ├─ app.config.ts.template
+                                            └─ ... (outros templates)
+```
+
+### Como o Plugin Usa a Integração
+
+1. **Importar Handler de Integração**
+   ```typescript
+   import { 
+     createProjectWithExtensionTemplates,
+     validatePrerequisites,
+     openProjectInNewWindow
+   } from '../src/extension-integration';
+   ```
+
+2. **Validar Pré-Requisitos**
+   ```typescript
+   const missing = await validatePrerequisites();
+   if (missing.length > 0) {
+     vscode.window.showErrorMessage(
+       `Pré-requisitos faltando: ${missing.join(', ')}`
+     );
+     return;
+   }
+   ```
+
+3. **Chamar Função de Criação com Callback**
+   ```typescript
+   const result = await createProjectWithExtensionTemplates({
+     projectName: 'meu-projeto',
+     parentPath: '/path/to/projects',
+     extensionPath: extensionContext.extensionPath, // Acesso aos templates
+     cliVersions: { angular: '21', poUi: '21' }
+   }, (step, total, message) => {
+     // Reportar progresso (1-13 passos)
+     console.log(`[${step}/${total}] ${message}`);
+     
+     // Atualizar progress bar no VS Code
+     vscode.window.showInformationMessage(
+       `[${step}/${total}] ${message}`
+     );
+   });
+   ```
+
+4. **Processar Resultado**
+   ```typescript
+   if (result.status === 'SUCCESS') {
+     // Abrir projeto em nova janela
+     await openProjectInNewWindow(result.projectPath!);
+     
+     vscode.window.showInformationMessage(
+       `✅ Projeto criado em ${result.projectPath}`
+     );
+   } else {
+     vscode.window.showErrorMessage(
+       `❌ Erro: ${result.message}`
+     );
+   }
+   ```
+
+### Garantias da Integração
+
+✅ **Templates Obrigatórios**
+- 25 templates carregados do `.vsix` (não via filesystem)
+- Validação fail-fast se algum template faltar
+- Injeção obrigatória via `templateService` parameter
+
+✅ **100% Non-Interactive CLI**
+- 6 variáveis de ambiente aplicadas globalmente
+- Flags específicas para cada comando (--defaults, --skip-confirmation, etc)
+- Sem stdin piping, sem prompts user
+
+✅ **Type-Safe Interface**
+- `CreateProjectConfig`, `CreateProjectResult` interfaces
+- `ProgressCallback` type para callbacks de progresso
+- TypeScript compilation verificada
+
+### Arquivo de Integração
+
+📍 **Localização**: `.vscode/agent-plugins/github.com/everson-junior/engenharia-ved-plugins/plugins/engenharia/poui/src/extension-integration.ts`
+
+**Exports**:
+- `createProjectWithExtensionTemplates()` - Função principal
+- `openProjectInNewWindow()` - Abrir projeto em nova janela
+- `configureProjectAfterCreation()` - Setup pós-criação
+- `validatePrerequisites()` - Validar Node.js, Git, Angular CLI
+- Tipos: `CreateProjectConfig`, `CreateProjectResult`, `ProgressCallback`
 
 ---
 
