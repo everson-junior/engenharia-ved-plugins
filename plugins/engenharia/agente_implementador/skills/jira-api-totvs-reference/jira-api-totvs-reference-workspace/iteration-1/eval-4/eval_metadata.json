@@ -1,0 +1,30 @@
+{
+  "test_id": "eval-4",
+  "test_name": "Find and Update High-Priority Bugs",
+  "prompt": "Write a Python script that finds all high-priority bugs created in the last 7 days, and updates their status to 'In Progress' if they're currently 'To Do'. Show error handling for auth failures and rate limiting.",
+  "execution_date": "2026-06-11",
+  "execution_mode": "baseline",
+  "skill_used": "none",
+  "response_type": "advanced_script_with_error_handling",
+  "response_length_chars": 5234,
+  "sections_included": [
+    "reasoning",
+    "complete_script_with_class",
+    "error_handling_section_401_403_429",
+    "network_error_handling",
+    "batch_operations",
+    "monitoring_metrics",
+    "testing_guidance",
+    "best_practices"
+  ],
+  "quality_metrics": {
+    "code_completeness": "very_high",
+    "error_handling_coverage": "excellent",
+    "rate_limiting": "implemented_with_backoff",
+    "logging": "comprehensive",
+    "production_ready": "yes",
+    "testing_guidance": "included",
+    "documentation": "extensive"
+  },
+  "notes": "Production-ready script with JIRABugUpdater class implementing retry logic, exponential backoff for rate limiting, proper authentication error handling, and structured logging. Includes diagnostic capabilities, batch operations, and monitoring. Response demonstrates enterprise-level scripting practices."
+}

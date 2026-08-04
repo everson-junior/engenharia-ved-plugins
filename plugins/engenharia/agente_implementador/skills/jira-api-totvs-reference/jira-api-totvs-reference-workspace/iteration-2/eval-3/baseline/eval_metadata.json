@@ -1,0 +1,38 @@
+{
+  "eval_id": 3,
+  "eval_name": "Estratégia para Atualizar em Lote 500 Issues",
+  "question_type": "architecture_and_best_practices",
+  "difficulty": "hard",
+  "baseline_quality_rating": 5,
+  "rating_justification": "Resposta excepcional com múltiplas estratégias, implementação completa com ThreadPoolExecutor, tratamento robusto de erros, logging estruturado, e boas práticas bem documentadas.",
+  "coverage": {
+    "sequential_approach": "good",
+    "bulk_api_knowledge": "excellent",
+    "parallel_implementation": "excellent",
+    "rate_limiting": "excellent",
+    "error_handling": "excellent",
+    "logging_and_monitoring": "excellent",
+    "code_quality": "excellent",
+    "performance_optimization": "excellent"
+  },
+  "strengths": [
+    "Explica claramente que JIRA não tem endpoint oficial de bulk update",
+    "Implementação com ThreadPoolExecutor e controle de concorrência",
+    "Classe BulkUpdateManager bem estruturada e reutilizável",
+    "Tratamento robusto de 429 (rate limit) com exponential backoff",
+    "Logging detalhado com timestamp e rastreamento",
+    "Validação de issues antes de atualizar",
+    "Geração de relatório JSON final",
+    "Tabela comparativa de abordagens",
+    "Estimativa de tempo realista (30-60s vs 500-1000s sequencial)"
+  ],
+  "weaknesses": [
+    "Não aborda transações ou atomicidade",
+    "Cache invalidation não mencionada",
+    "Não demonstra alternativa com fila (queue-based)"
+  ],
+  "test_prompt_language": "Portuguese",
+  "without_skill": true,
+  "response_time_estimate_seconds": 90,
+  "timestamp": "2024-06-11T12:00:00Z"
+}

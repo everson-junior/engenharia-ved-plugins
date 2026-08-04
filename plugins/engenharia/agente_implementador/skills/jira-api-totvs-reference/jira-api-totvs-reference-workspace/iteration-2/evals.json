@@ -1,0 +1,74 @@
+{
+  "skill_name": "jira-api-totvs-reference",
+  "iteration": 2,
+  "test_date": "2024-06-11",
+  "test_type": "baseline",
+  "test_access_level": "without_skill",
+  "language": "portuguese",
+  "improvements": [
+    "Testes em português (feedback do usuário)",
+    "Casos edge mais complexos",
+    "Cenários de produção com tratamento de erros",
+    "Validar filtros avançados de JQL"
+  ],
+  "baseline_results": {
+    "total_evaluations": 5,
+    "average_quality_rating": 4.8,
+    "average_completeness": 97.6,
+    "quality_distribution": {
+      "5_stars": 4,
+      "4_stars": 1,
+      "3_stars": 0
+    },
+    "total_code_blocks": 45,
+    "total_reference_tables": 12,
+    "total_lines_of_documentation": 14800
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Preciso criar um script Python que busque todos os issues de um projeto específico com status diferente de 'Concluído' e que tenham sido criados nos últimos 30 dias. O script deve retornar apenas os campos 'chave', 'resumo', 'status' e 'criado'. Como faço isso usando a API JIRA?",
+      "expected_output": "Código Python com requests que faz GET para /issue/search com JQL complexo usando ranges de data, autenticação Basic, tratamento de erros e paginação",
+      "baseline_quality_rating": 4,
+      "baseline_response_file": "eval-1/baseline/response.md",
+      "baseline_metadata_file": "eval-1/baseline/eval_metadata.json",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Estou recebendo erro 403 Forbidden ao tentar deletar uma issue via API JIRA. Estou usando token Bearer e o token foi gerado corretamente. O que pode estar causando isso?",
+      "expected_output": "Diagnóstico: Erro 403 significa falta de permissão, não problema de autenticação. Solução: verificar permissões do usuário, roles no JIRA, possível necessidade de admin ou permissão específica de delete",
+      "baseline_quality_rating": 5,
+      "baseline_response_file": "eval-2/baseline/response.md",
+      "baseline_metadata_file": "eval-2/baseline/eval_metadata.json",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Qual é a melhor estratégia para atualizar em lote 500 issues no JIRA? Devo fazer um request por issue ou existe uma API de bulk update? Qual é o melhor tratamento de erros?",
+      "expected_output": "Recomendação: PATCH individual com exponential backoff para rate limiting (429), retry logic, logging detalhado, tratamento de 401/403/404, validação de payload antes de enviar",
+      "baseline_quality_rating": 5,
+      "baseline_response_file": "eval-3/baseline/response.md",
+      "baseline_metadata_file": "eval-3/baseline/eval_metadata.json",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Preciso filtrar issues do JIRA usando múltiplos critérios: projeto 'DEVOPS', tipo 'Bug' ou 'Task', prioridade 'Alta' ou 'Crítica', status != 'Concluído', e que tenham uma label específica. Como escrevo a query JQL?",
+      "expected_output": "JQL complexo com AND/OR corretos: project = DEVOPS AND type IN (Bug, Task) AND priority IN (High, Critical) AND status != Done AND labels = 'minha-label'",
+      "baseline_quality_rating": 5,
+      "baseline_response_file": "eval-4/baseline/response.md",
+      "baseline_metadata_file": "eval-4/baseline/eval_metadata.json",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Estou desenvolvendo um MCP server para JIRA. Preciso de um padrão de como estruturar as chamadas à API JIRA dentro do MCP. Qual é a melhor abordagem para cache de dados, tratamento de rate limit e autenticação?",
+      "expected_output": "Padrão: wrapper class para API JIRA, cache com TTL, rate limiter com backoff exponencial, token refresh automático, logging estruturado, exemplo de como integrar com MCP",
+      "baseline_quality_rating": 5,
+      "baseline_response_file": "eval-5/baseline/response.md",
+      "baseline_metadata_file": "eval-5/baseline/eval_metadata.json",
+      "files": []
+    }
+  ]
+}

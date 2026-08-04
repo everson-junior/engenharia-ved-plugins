@@ -1,0 +1,29 @@
+{
+  "test_id": "eval-3",
+  "test_name": "Troubleshooting 401 Unauthorized Error",
+  "prompt": "I'm getting a 401 Unauthorized error when trying to update issue status. I'm using the PATCH method with this header: Authorization: Basic base64(username:password). What's the problem and how do I fix it?",
+  "execution_date": "2026-06-11",
+  "execution_mode": "baseline",
+  "skill_used": "none",
+  "response_type": "troubleshooting_and_diagnosis",
+  "response_length_chars": 3876,
+  "sections_included": [
+    "problem_analysis",
+    "common_issues_with_examples",
+    "solution_1_base64_verification",
+    "solution_2_auth_test",
+    "solution_3_requests_library",
+    "solution_4_api_token_generation",
+    "diagnostic_script",
+    "prevention_checklist"
+  ],
+  "quality_metrics": {
+    "problem_identification": "comprehensive",
+    "diagnostic_guidance": "excellent",
+    "solutions_provided": "multiple",
+    "code_examples": "detailed",
+    "error_explanation": "clear",
+    "debugging_tools": "included"
+  },
+  "notes": "Response identifies multiple causes of 401 error including encoding issues, wrong credentials type, and token expiration. Provides diagnostic script for users to debug their setup. Includes Cloud vs Server authentication differences and best practices checklist."
+}

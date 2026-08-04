@@ -1,0 +1,44 @@
+{
+  "eval_id": 5,
+  "eval_name": "MCP Server para JIRA - Padrão de Arquitetura",
+  "question_type": "architecture_and_design",
+  "difficulty": "hard",
+  "baseline_quality_rating": 5,
+  "rating_justification": "Resposta arquiteturalmente sólida com estrutura completa, separação de concerns, implementação de cache e rate limit robustas, e código pronto para produção.",
+  "coverage": {
+    "project_structure": "excellent",
+    "configuration_management": "excellent",
+    "jira_client_design": "excellent",
+    "cache_implementation": "excellent",
+    "rate_limiting": "excellent",
+    "mcp_handlers": "excellent",
+    "async_support": "excellent",
+    "error_handling": "excellent",
+    "documentation": "excellent",
+    "containerization": "excellent"
+  },
+  "strengths": [
+    "Estrutura de diretórios profissional e escalável",
+    "Configuração via variáveis de ambiente com dataclasses",
+    "JIRAClient com retry strategy (Retry + HTTPAdapter)",
+    "Dois backends de cache (MemoryCache + RedisCache) com interface abstrata",
+    "Cache com TTL e LRU eviction",
+    "Token bucket rate limiter implementado",
+    "MCP handlers com suporte async",
+    "Tools definidas com schema completo",
+    "Docker Compose para desenvolvimento",
+    "Requirements.txt bem organizado",
+    "Boas práticas resumidas em tabela"
+  ],
+  "weaknesses": [
+    "Não aborda autenticação OAuth2 advanced",
+    "Cache invalidation apenas mencionada, não completa",
+    "Não mostra testes unitários",
+    "Monitoramento/observabilidade básico",
+    "Não aborda websockets ou webhook handlers"
+  ],
+  "test_prompt_language": "Portuguese",
+  "without_skill": true,
+  "response_time_estimate_seconds": 120,
+  "timestamp": "2024-06-11T12:00:00Z"
+}

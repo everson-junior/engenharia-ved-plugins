@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "eval_name": "Script Python para Buscar Issues com Filtros",
+  "question_type": "implementation",
+  "difficulty": "medium",
+  "baseline_quality_rating": 4,
+  "rating_justification": "Resposta completa com script pronto para uso, boas práticas de tratamento de erros, e paginação implementada. Faltam detalhes sobre validação de credenciais.",
+  "coverage": {
+    "jql_construction": "excellent",
+    "python_implementation": "excellent",
+    "error_handling": "good",
+    "pagination": "good",
+    "security": "good",
+    "documentation": "excellent"
+  },
+  "strengths": [
+    "Script funcional e pronto para usar",
+    "Explica conceitos de JQL claramente",
+    "Demonstra duas abordagens (requests + python-jira)",
+    "Inclui tratamento de erros e salva resultado em JSON",
+    "Notas de segurança incluídas"
+  ],
+  "weaknesses": [
+    "Não demonstra tratamento de rate limit",
+    "Cache não abordado",
+    "Validação de entrada fraca"
+  ],
+  "test_prompt_language": "Portuguese",
+  "without_skill": true,
+  "response_time_estimate_seconds": 45,
+  "timestamp": "2024-06-11T12:00:00Z"
+}

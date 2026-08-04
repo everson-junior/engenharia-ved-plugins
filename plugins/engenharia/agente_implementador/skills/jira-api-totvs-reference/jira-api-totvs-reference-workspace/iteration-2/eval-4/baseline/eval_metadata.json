@@ -1,0 +1,36 @@
+{
+  "eval_id": 4,
+  "eval_name": "Query JQL Complexa com Múltiplos Critérios",
+  "question_type": "query_construction",
+  "difficulty": "medium",
+  "baseline_quality_rating": 5,
+  "rating_justification": "Resposta perfeita com query exata solicitada, múltiplas variações úteis, implementação Python completa, e checklist de sintaxe.",
+  "coverage": {
+    "jql_syntax": "excellent",
+    "query_construction": "excellent",
+    "complex_filters": "excellent",
+    "python_implementation": "excellent",
+    "pagination": "excellent",
+    "common_mistakes": "excellent",
+    "validation": "excellent"
+  },
+  "strengths": [
+    "Query exata solicitada fornecida imediatamente",
+    "Breakdown claro de cada critério",
+    "Múltiplas variações práticas (labels múltiplas, datas, assignee)",
+    "Script Python funcional com library python-jira",
+    "Função de paginação implementada",
+    "Checklist de sintaxe completo",
+    "Tabela de erros comuns com soluções",
+    "Recomendação de testar no JIRA UI primeiro",
+    "Explica operadores IN com parênteses obrigatórios"
+  ],
+  "weaknesses": [
+    "Não menciona performance de queries muito complexas",
+    "Campos customizados brevemente abordados"
+  ],
+  "test_prompt_language": "Portuguese",
+  "without_skill": true,
+  "response_time_estimate_seconds": 30,
+  "timestamp": "2024-06-11T12:00:00Z"
+}

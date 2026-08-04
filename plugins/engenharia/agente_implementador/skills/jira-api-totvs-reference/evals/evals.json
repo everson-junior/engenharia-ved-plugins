@@ -1,0 +1,35 @@
+{
+  "skill_name": "jira-api-totvs-reference",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to write Python code that searches for all open issues in the DEVOPS project where the priority is High or Critical. The issues should be returned with just the key, summary, status, and priority fields. Can you generate the code?",
+      "expected_output": "Python code using requests library that performs a GET request to /issue/search endpoint with appropriate JQL query, authentication, and parameter extraction",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "How do I create a new bug in the INFRASTRUCTURE project with high priority using the JIRA API? The bug should have the title 'Database connection timeout' and description 'Connection fails after 30 seconds'. Show me the code with proper authentication.",
+      "expected_output": "Python POST request code to /issue endpoint with correct payload structure, field mappings, and both authentication method options",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm getting a 401 Unauthorized error when trying to update issue status. I'm using the PATCH method with this header: Authorization: Basic base64(username:password). What's the problem and how do I fix it?",
+      "expected_output": "Explanation that PATCH typically requires Bearer Token auth (not Basic Auth), steps to generate API token, and corrected code example",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Write a Python script that finds all high-priority bugs created in the last 7 days, and updates their status to 'In Progress' if they're currently 'To Do'. Show error handling for auth failures and rate limiting.",
+      "expected_output": "Complete Python script with search query, loop through results, PATCH updates with Bearer Token, try-catch blocks for 401/429/500 errors",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "What are the available authentication methods for the TOTVS JIRA API and when should I use each one? I'm planning to build a POC first and then move to production.",
+      "expected_output": "Comparison of Basic Auth vs Bearer Token, use cases for each, how to generate tokens, security considerations, code examples for both",
+      "files": []
+    }
+  ]
+}

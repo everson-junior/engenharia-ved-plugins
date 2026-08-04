@@ -1,0 +1,26 @@
+{
+  "test_id": "eval-1",
+  "test_name": "Search Issues by Project and Priority",
+  "prompt": "I need to write Python code that searches for all open issues in the DEVOPS project where the priority is High or Critical. The issues should be returned with just the key, summary, status, and priority fields. Can you generate the code?",
+  "execution_date": "2026-06-11",
+  "execution_mode": "baseline",
+  "skill_used": "none",
+  "response_type": "code_generation",
+  "response_length_chars": 2847,
+  "sections_included": [
+    "reasoning",
+    "jql_query_explanation",
+    "python_code",
+    "error_handling",
+    "curl_alternative",
+    "expected_response"
+  ],
+  "quality_metrics": {
+    "code_completeness": "high",
+    "documentation": "comprehensive",
+    "error_handling": "included",
+    "practical_examples": "yes",
+    "security_considerations": "addressed"
+  },
+  "notes": "Response includes complete working code with authentication, field projection, error handling, and cURL alternative. Response demonstrates understanding of JQL queries and JIRA API search endpoint."
+}

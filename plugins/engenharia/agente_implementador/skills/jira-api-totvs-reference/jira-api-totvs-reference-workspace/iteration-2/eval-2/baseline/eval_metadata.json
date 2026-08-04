@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "Erro 403 Forbidden ao Deletar Issue",
+  "question_type": "troubleshooting",
+  "difficulty": "medium",
+  "baseline_quality_rating": 5,
+  "rating_justification": "Resposta muito abrangente com checklist completo, script de troubleshooting estruturado, e múltiplas causas raiz explicadas. Diferencia corretamente tipos de autenticação.",
+  "coverage": {
+    "root_cause_analysis": "excellent",
+    "troubleshooting_steps": "excellent",
+    "authentication_types": "excellent",
+    "script_completeness": "excellent",
+    "error_handling": "excellent",
+    "documentation": "excellent"
+  },
+  "strengths": [
+    "Identificação correta de todas as causas possíveis",
+    "Script de diagnóstico passo-a-passo bem estruturado",
+    "Diferencia Bearer vs Basic Auth claramente",
+    "Checklist de resolução prático",
+    "Explica permissões em JIRA Cloud vs Server/Data Center",
+    "Múltiplas abordagens para resolver"
+  ],
+  "weaknesses": [
+    "Poderia detalhar mais sobre rate limit como causa"
+  ],
+  "test_prompt_language": "Portuguese",
+  "without_skill": true,
+  "response_time_estimate_seconds": 60,
+  "timestamp": "2024-06-11T12:00:00Z"
+}
