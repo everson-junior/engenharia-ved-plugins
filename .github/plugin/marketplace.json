@@ -53,17 +53,6 @@
 			"description": "Agente que implementa issues do JIRA e realiza commits e PRs no respositório do Azure DevOps",
 			"version": "0.0.3",
 			"icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
-			"skills": [
-				"./plugins/engenharia/agente_implementador/skills/ai-assisted-jira-flow",
-				"./plugins/engenharia/agente_implementador/skills/jira-attached-plan-flow",
-				"./plugins/engenharia/agente_implementador/skills/pr-validation-jira-azure-flow",
-				"./plugins/engenharia/agente_implementador/skills/superpowers"
-			],
-			"agents": [
-				"./plugins/engenharia/agente_implementador/agents/jira-context-researcher.agent.md",
-				"./plugins/engenharia/agente_implementador/agents/jira-delivery-scribe.agent.md",
-				"./plugins/engenharia/agente_implementador/agents/jira-flow.agent.md"
-			],
 			"repository": "https://github.com/everson-junior/engenharia-ved-plugins",
 			"keywords": [
 				"jira",

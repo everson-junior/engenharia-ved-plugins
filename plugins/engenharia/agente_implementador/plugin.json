@@ -14,7 +14,7 @@
         "Engenharia-ved",
         "v&D"
     ],
-    "skills": "skills/",
+    "skills": ["skills/", "skills/superpowers"],
     "agents": "agents/",
     "mcpServers": ".mcp.json",
     "hooks": {},
