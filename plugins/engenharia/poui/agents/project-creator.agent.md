@@ -22,12 +22,13 @@ Você é ativado quando um dev precisa criar um novo projeto Angular 21 + PO UI 
 
 1. **Validar Pré-Requisitos Finais** — Fazer double-check de Node.js, Git, Angular CLI v21 antes de proceder
 2. **Executar 13 Passos de Criação** — Orquestrar Angular CLI, PO UI install, configurações, templates em sequência
-3. **Configurar Projeto Base** — Aplicar dependency overrides, atualizar angular.json, criar environments
-4. **Copiar Assets Eng-VeD** — Transferir `.poui/` (agentes, skills, docs) para novo projeto como `.context/`
-5. **Patchar Dependências** — Garantir versions corretas (@angular/*, @totvs/*, rxjs, zone.js) no package.json
-6. **Configurar Integração TOTVS** — Atualizar settings.json com extensões Protheus/TLPP suportadas
-7. **Validar Resultado** — Confirmar estrutura criada, arquivos críticos existentes, git inicializado
-8. **Informar Progresso** — Comunicar cada etapa com mensagens detalhadas de status e erros específicos
+3. **Delegar para a Extensão Eng-VeD** — Disparar `extension-eng-ved.createProject` via `vscode.commands.executeCommand` quando a entrada vier do participante de chat
+4. **Configurar Projeto Base** — Aplicar dependency overrides, atualizar angular.json, criar environments
+5. **Copiar Assets Eng-VeD** — Transferir `.poui/` (agentes, skills, docs) para novo projeto como `.context/`
+6. **Patchar Dependências** — Garantir versions corretas (@angular/*, @totvs/*, rxjs, zone.js) no package.json
+7. **Configurar Integração TOTVS** — Atualizar settings.json com extensões Protheus/TLPP suportadas
+8. **Validar Resultado** — Confirmar estrutura criada, arquivos críticos existentes, git inicializado
+9. **Informar Progresso** — Comunicar cada etapa com mensagens detalhadas de status e erros específicos
 
 ## Best Practices
 
@@ -100,6 +101,17 @@ Este agente é invocado pela **skill `create-project`**. A workflow é:
 4. Agente executa os 13 passos com progress reporting
 5. Agente valida resultado e reporta sucesso/erro
 6. Skill aguarda conclusão e oferece abrir projeto
+
+### Entrada pelo participante de chat
+
+O participante `eng-ved-poui.project-creator`, registrado por `registerChatParticipant(context)`, é o ponto de entrada do Copilot para a intenção `criarProjeto` ou "criar projeto". Ele não implementa os 13 passos nem simula uma conclusão. O fluxo obrigatório é:
+
+1. Verificar a extensão `totvs.extension-eng-ved`.
+2. Ativá-la quando necessário.
+3. Executar `vscode.commands.executeCommand('extension-eng-ved.createProject')`.
+4. Informar no stream que o assistente foi iniciado ou retornar a mensagem de erro.
+
+Quando `createProjectWithExtensionTemplates` for usado por outro consumidor, ele deve seguir o mesmo caminho e só retornar `SUCCESS` depois que o comando for aceito pelo VS Code. A coleta interativa, os templates e a execução dos 13 passos pertencem à extensão Eng-VeD.
 
 **Interface de Comunicação:**
 - Input: `{ projectName: string, parentPath: string, cliVersions: { angular: "21", poUi: "21" } }`

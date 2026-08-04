@@ -20,7 +20,29 @@ Use esta skill quando:
 **Triggers:**
 - `@create-project` — Chamar skill diretamente via chat Copilot
 - Outro agente (ex: `onboarding-specialist`) invoca esta skill programaticamente
-- Fallback command `extension-eng-ved.createProject` (deprecated, será removido em v0.0.3)
+- Participante de chat `eng-ved-poui.project-creator` detecta `criarProjeto` ou "criar projeto"
+- Comando `extension-eng-ved.createProject` executado pela extensão Eng-VeD
+
+### Entrada pelo Chat do Copilot
+
+Quando a intenção vier do participante de chat, o plugin não recria o fluxo de criação. O handler deve:
+
+1. Verificar `vscode.extensions.getExtension('totvs.extension-eng-ved')`.
+2. Ativar a extensão se necessário com `extension.activate()`.
+3. Executar `await vscode.commands.executeCommand('extension-eng-ved.createProject')`.
+4. Reportar no stream que o assistente foi iniciado ou exibir o erro retornado.
+
+O comando abre a coleta de nome/local e executa os 13 passos na extensão Eng-VeD. Parâmetros opcionais podem ser enviados como segundo argumento:
+
+```typescript
+await vscode.commands.executeCommand('extension-eng-ved.createProject', {
+  projectName,
+  parentPath,
+  cliVersions: { angular: '21', poUi: '21' }
+});
+```
+
+O registrador correspondente está em `src/extension-integration.ts`, na função `registerChatParticipant(context)`. A extensão hospedeira deve chamar essa função durante a ativação.
 
 ---
 
@@ -465,21 +487,16 @@ Project opened in new VS Code window
 ...
 ```
 
-### Exemplo 3: Fallback Command (Deprecated)
+### Exemplo 3: Participante de Chat e Comando da Extensão
 
-```javascript
-// src/extension.ts
+```typescript
+// A extensão hospedeira registra o participante do plugin no activate.
+import * as vscode from 'vscode';
+import { registerChatParticipant } from '../src/extension-integration';
 
-vscode.commands.registerCommand('extension-eng-ved.createProject', async () => {
-  vscode.window.showWarningMessage(
-    '⚠️ Comando descontinuado (v0.0.2).\n\n' +
-    'Use skill @create-project no chat do Copilot.\n\n' +
-    'Este comando será removido em v0.0.3.'
-  );
-  
-  // Opcionalmente, delegar para skill internamente (TBD)
-  // await invokeSkill('create-project');
-});
+export function activate(context: vscode.ExtensionContext): void {
+  registerChatParticipant(context);
+}
 ```
 
 ---

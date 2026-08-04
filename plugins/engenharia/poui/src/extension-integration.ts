@@ -24,7 +24,7 @@ import * as vscode from 'vscode';
 export interface CreateProjectConfig {
   projectName: string;
   parentPath: string;
-  extensionPath: string;
+  extensionPath?: string;
   cliVersions?: {
     angular: string;
     poUi: string;
@@ -45,6 +45,79 @@ export interface CreateProjectResult {
  * Tipo para callback de progresso
  */
 export type ProgressCallback = (step: number, total: number, message: string) => void;
+
+export interface CreateProjectCommandArgs {
+  projectName?: string;
+  parentPath?: string;
+  cliVersions?: CreateProjectConfig['cliVersions'];
+}
+
+const EXTENSION_ID = 'totvs.extension-eng-ved';
+const CREATE_PROJECT_COMMAND = 'extension-eng-ved.createProject';
+
+function getExtensionOrThrow(): vscode.Extension<unknown> {
+  const extension = vscode.extensions.getExtension(EXTENSION_ID);
+
+  if (!extension) {
+    throw new Error(
+      `Extensão '${EXTENSION_ID}' não encontrada. ` +
+      'Instale a extensão Extension Eng-VeD para criar projetos.'
+    );
+  }
+
+  return extension;
+}
+
+async function executeCreateProjectCommand(
+  args?: CreateProjectCommandArgs
+): Promise<unknown> {
+  const extension = getExtensionOrThrow();
+
+  if (!extension.isActive) {
+    await extension.activate();
+  }
+
+  return vscode.commands.executeCommand(
+    CREATE_PROJECT_COMMAND,
+    args && Object.keys(args).length > 0 ? args : undefined
+  );
+}
+
+function isCreateProjectRequest(request: vscode.ChatRequest): boolean {
+  return request.command === 'criarProjeto' || /criar\s+projeto/i.test(request.prompt);
+}
+
+/** Registra o participante que encaminha a intenção do chat para a extensão Eng-VeD. */
+export function registerChatParticipant(context: vscode.ExtensionContext): vscode.ChatParticipant {
+  const participant = vscode.chat.createChatParticipant(
+    'eng-ved-poui.project-creator',
+    async (
+      request: vscode.ChatRequest,
+      _chatContext: vscode.ChatContext,
+      stream: vscode.ChatResponseStream,
+      _token: vscode.CancellationToken
+    ) => {
+      if (!isCreateProjectRequest(request)) {
+        stream.markdown('Como posso ajudar com o projeto Eng-VeD?');
+        return;
+      }
+
+      stream.progress('Iniciando a criação do projeto via Eng-VeD...');
+
+      try {
+        await executeCreateProjectCommand();
+        stream.markdown('✅ O assistente de criação do projeto foi iniciado.');
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        stream.markdown(`❌ Não foi possível iniciar a criação do projeto: ${message}`);
+      }
+    }
+  );
+
+  participant.iconPath = new vscode.ThemeIcon('package');
+  context.subscriptions.push(participant);
+  return participant;
+}
 
 /**
  * Handler principal para criar projeto com templates da extensão
@@ -78,54 +151,22 @@ export async function createProjectWithExtensionTemplates(
   onProgress?: ProgressCallback
 ): Promise<CreateProjectResult> {
   try {
-    // ✅ Validar configuração de entrada
-    if (!config.projectName || !config.parentPath || !config.extensionPath) {
-      throw new Error('Configuração incompleta: projectName, parentPath e extensionPath são obrigatórios');
+    if (!config.projectName || !config.parentPath) {
+      throw new Error('Configuração incompleta: projectName e parentPath são obrigatórios');
     }
 
-    onProgress?.(1, 13, 'Validando extensão extension-eng-ved...');
-
-    // ✅ Obter referência à extensão extension-eng-ved
-    const extensionId = 'TOTVS.extension-eng-ved';
-    const extension = vscode.extensions.getExtension(extensionId);
-
-    if (!extension) {
-      throw new Error(
-        `Extensão '${extensionId}' não encontrada. ` +
-        'Por favor, instale a extensão BrAIn Eng-V&D do VS Code Marketplace.'
-      );
-    }
-
-    // Ativar extensão se ainda não estiver ativa
-    if (!extension.isActive) {
-      onProgress?.(2, 13, 'Ativando extensão...');
-      await extension.activate();
-    }
-
-    // ✅ Importar serviços dinâmicos da extensão
-    // Nota: Isso requer que os serviços estejam exportados no main da extensão
-    // ou disponibilizados via vscode.window.createWebviewPanel ou similar
-    
-    onProgress?.(3, 13, 'Carregando serviços de template da extensão...');
-
-    // Para demonstração, vamos criar um wrapper que simula a integração
-    // Em produção, você terá que expor os serviços via extension.exports
-    const projectPath = `${config.parentPath}/${config.projectName}`;
-
-    onProgress?.(4, 13, 'Inicializando template service...');
-    onProgress?.(5, 13, 'Validando templates...');
-    onProgress?.(6, 13, 'Executando ng new...');
-    onProgress?.(7, 13, 'Instalando PO UI...');
-    onProgress?.(8, 13, 'Instalando templates PO UI...');
-    onProgress?.(9, 13, 'Gerando estrutura...');
-    onProgress?.(10, 13, 'Aplicando templates...');
-    onProgress?.(11, 13, 'Configurando angular.json...');
-    onProgress?.(12, 13, 'Finalizando...');
+    onProgress?.(1, 13, 'Validando extensão Eng-VeD...');
+    await executeCreateProjectCommand({
+      projectName: config.projectName,
+      parentPath: config.parentPath,
+      cliVersions: config.cliVersions
+    });
+    onProgress?.(13, 13, 'Comando de criação do projeto iniciado.');
 
     return {
       status: 'SUCCESS',
-      message: `Projeto '${config.projectName}' criado com sucesso em ${projectPath}`,
-      projectPath
+      message: `Comando de criação do projeto '${config.projectName}' iniciado.`,
+      projectPath: `${config.parentPath}/${config.projectName}`
     };
 
   } catch (error) {
