@@ -51,7 +51,7 @@
 			"name": "agente-implementador",
 			"source": "./plugins/engenharia/agente_implementador",
 			"description": "Agente que implementa issues do JIRA e realiza commits e PRs no respositório do Azure DevOps",
-			"version": "0.0.2",
+			"version": "0.0.3",
 			"icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
 			"skills": [
 				"./plugins/engenharia/agente_implementador/skills/ai-assisted-jira-flow",
