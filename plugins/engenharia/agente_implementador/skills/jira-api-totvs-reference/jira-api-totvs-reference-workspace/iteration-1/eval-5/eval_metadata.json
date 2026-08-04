@@ -1,0 +1,33 @@
+{
+  "test_id": "eval-5",
+  "test_name": "Authentication Methods Overview",
+  "prompt": "What are the available authentication methods for the TOTVS JIRA API and when should I use each one? I'm planning to build a POC first and then move to production.",
+  "execution_date": "2026-06-11",
+  "execution_mode": "baseline",
+  "skill_used": "none",
+  "response_type": "comprehensive_reference_guide",
+  "response_length_chars": 8567,
+  "sections_included": [
+    "overview_table",
+    "api_token_http_basic",
+    "oauth_2_0",
+    "personal_access_token_pat",
+    "service_account",
+    "saml_sso",
+    "poc_vs_production_strategy",
+    "migration_path",
+    "credential_management",
+    "comparison_table",
+    "security_recommendations"
+  ],
+  "quality_metrics": {
+    "comprehensiveness": "very_high",
+    "poc_guidance": "detailed",
+    "production_guidance": "detailed",
+    "security_focus": "comprehensive",
+    "decision_matrices": "included",
+    "code_examples": "multiple",
+    "best_practices": "extensive"
+  },
+  "notes": "Comprehensive guide covering all 5 authentication methods with detailed pros/cons, setup instructions, and decision matrices. Includes POC vs Production strategy with phase-based approach. Provides credential management best practices for different deployment scenarios. Addresses both Cloud and Server/Data Center platforms. Includes security recommendations for each phase."
+}

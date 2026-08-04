@@ -1,0 +1,29 @@
+{
+  "test_id": "eval-2",
+  "test_name": "Create a Bug Issue",
+  "prompt": "How do I create a new bug in the INFRASTRUCTURE project with high priority using the JIRA API? The bug should have the title 'Database connection timeout' and description 'Connection fails after 30 seconds'. Show me the code with proper authentication.",
+  "execution_date": "2026-06-11",
+  "execution_mode": "baseline",
+  "skill_used": "none",
+  "response_type": "code_generation_with_auth",
+  "response_length_chars": 3214,
+  "sections_included": [
+    "reasoning",
+    "create_issue_endpoint_explanation",
+    "python_code_with_raw_requests",
+    "python_code_with_library",
+    "authentication_details",
+    "description_format_adf",
+    "error_codes_table",
+    "common_mistakes"
+  ],
+  "quality_metrics": {
+    "code_completeness": "high",
+    "authentication_coverage": "comprehensive",
+    "documentation": "very_high",
+    "error_handling": "detailed",
+    "practical_examples": "yes",
+    "alternative_libraries": "yes"
+  },
+  "notes": "Response covers both raw requests approach and Atlassian library. Explains Atlassian Document Format (ADF) for descriptions. Includes authentication methods comparison and common error codes. Addresses both Cloud and Server authentication."
+}

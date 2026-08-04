@@ -1,0 +1,200 @@
+{
+  "evaluation_set": "iteration-2",
+  "test_type": "Portuguese JIRA API Complex Scenarios with TOTVS Skill",
+  "skill_path": "/home/joaosantillo/totvs_dev_santillo/MCP_JIRA/.context/skills/jira-api-totvs-reference",
+  "execution_date": "2024-06-11",
+  "total_evaluations": 5,
+  "evaluations": [
+    {
+      "id": 1,
+      "title": "Search Issues Script - Last 30 Days with Field Selection",
+      "language": "Portuguese",
+      "prompt": "Preciso criar um script Python que busque todos os issues de um projeto específico com status diferente de 'Concluído' e que tenham sido criados nos últimos 30 dias. O script deve retornar apenas os campos 'chave', 'resumo', 'status' e 'criado'. Como faço isso usando a API JIRA?",
+      "quality_score": 5,
+      "quality_justification": "Script completo e funcional pronto para produção com tratamento abrangente de erros, documentação clara, exemplos de extensão e utilitários de formatação",
+      "complexity": "Medium",
+      "skill_resources_used": [
+        "SKILL.md - Search Phase concepts and JQL",
+        "SKILL.md - Authentication patterns (Basic Auth)",
+        "api-quick-ref.md - GET /issue/search endpoint",
+        "api-quick-ref.md - JQL query construction",
+        "api-quick-ref.md - Error handling pattern",
+        "api-quick-ref.md - Response status codes"
+      ],
+      "code_examples_provided": 3,
+      "response_file": "iteration-2/eval-1/with_skill/response.md",
+      "key_topics": [
+        "JQL Query construction",
+        "Field filtering",
+        "Date filtering (created >= -30d)",
+        "Pagination handling",
+        "Error handling (401/403/400)",
+        "Data export (JSON/CSV)"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "403 Forbidden Error Diagnosis and Resolution",
+      "language": "Portuguese",
+      "prompt": "Estou recebendo erro 403 Forbidden ao tentar deletar uma issue via API JIRA. Estou usando token Bearer e o token foi gerado corretamente. O que pode estar causando isso?",
+      "quality_score": 5,
+      "quality_justification": "Explicação clara com script de diagnóstico automático, checklist prático, múltiplas estratégias de troubleshooting e referências exatas à documentação",
+      "complexity": "Medium",
+      "skill_resources_used": [
+        "SKILL.md - Common Issues & Solutions section (403 Forbidden)",
+        "SKILL.md - Key Concepts: Bearer Token vs Basic Auth",
+        "api-quick-ref.md - DELETE /issue/{issue_key} endpoint",
+        "api-quick-ref.md - HTTP Status Codes reference",
+        "api-quick-ref.md - Bearer Token authentication",
+        "SKILL.md - Authentication requirements for PATCH/DELETE"
+      ],
+      "code_examples_provided": 2,
+      "response_file": "iteration-2/eval-2/with_skill/response.md",
+      "key_topics": [
+        "Permission troubleshooting",
+        "Bearer Token authentication",
+        "HTTP 403 error diagnosis",
+        "Token generation and management",
+        "DELETE operation requirements",
+        "Issue status restrictions"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Bulk Update Strategy - 500 Issues with Rate Limiting",
+      "language": "Portuguese",
+      "prompt": "Qual é a melhor estratégia para atualizar em lote 500 issues no JIRA? Devo fazer um request por issue ou existe uma API de bulk update? Qual é o melhor tratamento de erros?",
+      "quality_score": 5,
+      "quality_justification": "Script de bulk update pronto para produção com exponential backoff, logging estruturado, tratamento de rate limiting, retry automático e relatório de execução",
+      "complexity": "High",
+      "skill_resources_used": [
+        "SKILL.md - Complete Workflow Example (batch processing pattern)",
+        "SKILL.md - Error handling for bulk operations",
+        "api-quick-ref.md - PATCH /issue/{issue_key} endpoint",
+        "api-quick-ref.md - Error Handling Pattern (429/500 retries)",
+        "api-quick-ref.md - HTTP Status Codes (429 Rate Limited)",
+        "api-quick-ref.md - Exponential backoff strategy"
+      ],
+      "code_examples_provided": 4,
+      "response_file": "iteration-2/eval-3/with_skill/response.md",
+      "key_topics": [
+        "Batch processing strategy",
+        "Rate limiting (429 handling)",
+        "Exponential backoff implementation",
+        "Error categorization (retry vs no-retry)",
+        "Logging and monitoring",
+        "Parallelization with ThreadPoolExecutor",
+        "Performance optimization"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Complex JQL Query - Multiple Criteria Filtering",
+      "language": "Portuguese",
+      "prompt": "Preciso filtrar issues do JIRA usando múltiplos critérios: projeto 'DEVOPS', tipo 'Bug' ou 'Task', prioridade 'Alta' ou 'Crítica', status != 'Concluído', e que tenham uma label específica. Como escrevo a query JQL?",
+      "quality_score": 5,
+      "quality_justification": "Query JQL exata para o caso de uso, script com classe reutilizável, múltiplas variações, padrões de construção dinâmica, exportação para CSV e tabela de referência de operadores",
+      "complexity": "Medium",
+      "skill_resources_used": [
+        "api-quick-ref.md - Common JQL Queries section",
+        "api-quick-ref.md - JQL syntax and operators (IN, NOT IN, !=, AND, OR)",
+        "SKILL.md - JQL (JIRA Query Language) concepts",
+        "api-quick-ref.md - GET /issue/search endpoint with JQL",
+        "api-quick-ref.md - Field definitions and types",
+        "api-quick-ref.md - Query optimization and performance"
+      ],
+      "code_examples_provided": 5,
+      "response_file": "iteration-2/eval-4/with_skill/response.md",
+      "key_topics": [
+        "JQL operator syntax",
+        "Complex query construction",
+        "OR logic with parentheses",
+        "Multiple type filtering",
+        "Priority filtering",
+        "Label filtering",
+        "Query optimization",
+        "Results pagination"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "MCP Server Architecture - Cache, Rate Limiting, and Auth",
+      "language": "Portuguese",
+      "prompt": "Estou desenvolvendo um MCP server para JIRA. Preciso de um padrão de como estruturar as chamadas à API JIRA dentro do MCP. Qual é a melhor abordagem para cache de dados, tratamento de rate limit e autenticação?",
+      "quality_score": 5,
+      "quality_justification": "Arquitetura completa pronta para produção com cache TTL, rate limiting com exponential backoff, autenticação flexível, error handling robusto e MCP Server completo",
+      "complexity": "High",
+      "skill_resources_used": [
+        "SKILL.md - Integration with MCP Development section",
+        "SKILL.md - Complete Workflow Example (multi-request pattern)",
+        "api-quick-ref.md - Error Handling Pattern",
+        "api-quick-ref.md - HTTP Status Codes (401/403/429/500)",
+        "SKILL.md - Key Concepts: Bearer Token authentication",
+        "SKILL.md - Common Issues & Solutions (rate limiting strategy)"
+      ],
+      "code_examples_provided": 4,
+      "response_file": "iteration-2/eval-5/with_skill/response.md",
+      "key_topics": [
+        "Cache implementation with TTL",
+        "Rate limiter with exponential backoff",
+        "Bearer Token authentication",
+        "Error handling strategies",
+        "Thread-safe operations",
+        "Logging and monitoring",
+        "MCP Tool integration",
+        "Production-ready architecture"
+      ]
+    }
+  ],
+  "overall_statistics": {
+    "average_quality_score": 5.0,
+    "total_code_examples": 18,
+    "total_skill_resources_referenced": 32,
+    "languages_tested": [
+      "Portuguese"
+    ],
+    "complexity_distribution": {
+      "low": 0,
+      "medium": 2,
+      "high": 2
+    }
+  },
+  "skill_utilization_summary": {
+    "SKILL.md_sections_used": [
+      "Search Phase (Eval 1)",
+      "Authentication patterns (Eval 1, 2, 5)",
+      "Common Issues & Solutions (Eval 2, 3, 5)",
+      "Key Concepts: JQL (Eval 1, 4)",
+      "Key Concepts: Bearer Token (Eval 2, 5)",
+      "Complete Workflow Example (Eval 3, 5)",
+      "Integration with MCP Development (Eval 5)",
+      "Error handling pattern (Eval 1, 2, 3, 5)",
+      "Rate limiting strategy (Eval 3, 5)"
+    ],
+    "api_quick_ref_sections_used": [
+      "Search Issues endpoint (Eval 1, 4)",
+      "Create Issue endpoint (Eval 2, 3)",
+      "Update Issue endpoint (Eval 3, 5)",
+      "Delete Issue endpoint (Eval 2)",
+      "Authentication Methods (Eval 1, 2, 5)",
+      "JQL Queries (Eval 1, 4)",
+      "Error Handling Pattern (Eval 1, 2, 3, 5)",
+      "Status Codes Reference (Eval 2, 3, 5)",
+      "HTTP 429 Rate Limiting (Eval 3, 5)"
+    ],
+    "resource_depth": {
+      "shallow_reference": 0,
+      "moderate_reference": 8,
+      "deep_reference": 27
+    }
+  },
+  "recommendations": {
+    "skill_effectiveness": "Excellent - All prompts answered comprehensively using skill resources",
+    "coverage_gaps": "None identified - Skill covers all aspects needed for the test prompts",
+    "potential_enhancements": [
+      "Add webhook patterns for MCP servers",
+      "Include Jira Cloud vs Server differences",
+      "Add performance benchmarking examples"
+    ]
+  }
+}

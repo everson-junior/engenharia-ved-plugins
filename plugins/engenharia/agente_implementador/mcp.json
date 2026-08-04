@@ -1,0 +1,44 @@
+{
+  "inputs": [
+    {
+      "id": "ado_org",
+      "type": "promptString",
+      "description": "Nome da organização do Azure DevOps. Ex: totvstfs, contoso"
+    },
+    {
+      "id": "jira_mcp_auth_token",
+      "type": "promptString",
+      "description": "Token Bearer configurado em MCP_AUTH_TOKEN no servidor JIRA MCP",
+      "password": true
+    }
+  ],
+  "servers": {
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "jira": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:jira_mcp_auth_token}"
+      }
+    },
+    "azure-devops-local": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${input:ado_org}",
+        "-d",
+        "core",
+        "repositories",
+        "pipelines",
+        "-a",
+        "azcli"
+
+      ]
+    }
+  }
+}

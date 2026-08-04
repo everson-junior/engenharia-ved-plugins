@@ -7,13 +7,13 @@
 	"icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
 	"author": "Engenharia V&D",
 	"keywords": [
-			"poui",
-			"Engenharia-ved",
-			"v&D",
-			"engenharia-v&d",
-			"Agents-poui",
-			"protheus-poui"
-		],
+		"jira",
+		"azure-devops",
+		"agente-implementador",
+		"agente-implementador-jira-azure",
+		"Engenharia-ved",
+		"v&D"
+	],
 	"skills": [
 			"./plugins/engenharia/agente_implementador/skills/ai-assisted-jira-flow",
 			"./plugins/engenharia/agente_implementador/skills/jira-attached-plan-flow",
@@ -26,29 +26,26 @@
 			"./plugins/engenharia/agente_implementador/agents/jira-flow.agent.md"
 			],
 	"mcpServers": {
-			"jira": {
-				"type": "http",
-				"url": "http://localhost:8000/mcp",
-				"headers": {
-					"Authorization": "Bearer uCdXsz3ZPEcpSGgv2LnAIxEknwATaliiCiA-rOK3szI"
-				}
-			},
-			"azure-devops-local": {
-				"type": "stdio",
-				"command": "npx",
-				"args": [
-						"-y",
-						"@azure-devops/mcp",
-						"${input:ado_org}",
-						"-d",
-						"core",
-						"repositories",
-						"pipelines",
-						"-a",
-						"azcli"
-					]
-			}
-			},
-		"hooks": {},
-		"repository": "https://github.com/everson-junior/engenharia-ved-plugins"
+		"jira": {
+			"type": "http",
+			"url": "http://develop.engenharia-vd.totvs.io:18066/mcp"
+		},
+		"azure-devops-local": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@azure-devops/mcp",
+				"$totvstfs",
+				"-d",
+				"core",
+				"repositories",
+				"pipelines",
+				"-a",
+				"azcli"
+			]
+		}
+	},
+	"hooks": {},
+	"repository": "https://github.com/everson-junior/engenharia-ved-plugins"
 }
