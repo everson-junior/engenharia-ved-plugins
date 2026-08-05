@@ -15,27 +15,6 @@
 			"description": "Transforma o VS Code em uma esteira guiada com duas frentes complementares: uma para acelerar a criação e evolução de projetos PO UI",
 			"version": "0.0.1",
 			"icon": "./plugins/engenharia/poui/assets/icon.png",
-			"skills": [
-				"./plugins/engenharia/poui/skills/api-design",
-				"./plugins/engenharia/poui/skills/poui-modal-password-recovery",
-				"./plugins/engenharia/poui/skills/poui-page-background",
-				"./plugins/engenharia/poui/skills/poui-page-blocked-user",
-				"./plugins/engenharia/poui/skills/poui-page-change-password",
-				"./plugins/engenharia/poui/skills/poui-page-customization-service",
-				"./plugins/engenharia/poui/skills/poui-page-dynamic-detail",
-				"./plugins/engenharia/poui/skills/poui-page-dynamic-edit",
-				"./plugins/engenharia/poui/skills/poui-page-dynamic-search",
-				"./plugins/engenharia/poui/skills/poui-page-dynamic-service",
-				"./plugins/engenharia/poui/skills/poui-page-dynamic-table",
-				"./plugins/engenharia/poui/skills/poui-page-job-scheduler",
-				"./plugins/engenharia/poui/skills/poui-page-login",
-				"./plugins/engenharia/poui/skills/poui-templates-overview",
-				"./plugins/engenharia/poui/skills/poui-templates-utils"
-			],
-			"agents": [
-				"./plugins/engenharia/poui/agents/poui-context.agent.md"
-			],
-			"mcpServers": {},
 			"repository": "https://github.com/everson-junior/engenharia-ved-plugins",
 			"keywords": [
 				"poui",

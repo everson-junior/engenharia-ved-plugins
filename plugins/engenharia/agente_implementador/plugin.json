@@ -1,22 +1,39 @@
 {
-    "$schema": "https://json-schema.org/draft-07/schema",
-    "name": "agente-implementador",
-    "description": "Agente que implementa issues do JIRA e realiza commits e PRs no respositório do Azure DevOps",
-    "version": "0.0.3",
-    "license": "MIT",
-    "icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
-    "author": "Engenharia V&D",
-    "keywords": [
-        "jira",
-        "azure-devops",
-        "agente-implementador",
-        "agente-implementador-jira-azure",
-        "Engenharia-ved",
-        "v&D"
-    ],
-    "skills": ["skills/", "skills/superpowers"],
-    "agents": "agents/",
-    "mcpServers": ".mcp.json",
-    "hooks": {},
-    "repository": "https://github.com/everson-junior/engenharia-ved-plugins"
+  "inputs": [
+    {
+      "id": "totvs-jira-token",
+      "type": "promptString",
+      "description": "Token Bearer do MCP JIRA TOTVS",
+      "password": true
+    },
+    {
+      "id": "totvs-ado-org",
+      "type": "promptString",
+      "description": "Nome da organizacao do Azure DevOps"
+    }
+  ],
+  "servers": {
+    "totvsJira": {
+      "type": "http",
+      "url": "http://develop.engenharia-vd.totvs.io:18066/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:totvs-jira-token}"
+      }
+    },
+    "totvsAzureDevops": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${input:totvs-ado-org}",
+        "-d",
+        "core",
+        "repositories",
+        "pipelines",
+        "-a",
+        "azcli"
+      ]
+    }
+  }
 }

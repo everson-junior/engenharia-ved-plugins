@@ -1,10 +1,10 @@
 {
 	"$schema": "https://json-schema.org/draft-07/schema",
-	"name": "agente_implementador",
-	"description": "Agente que implementa issues do JIRA e realiza commits e PRs no respositório do Azure DevOps",
+	"name": "poui",
+	"description": "Angular + PO UI com mais velocidade e opere Harness, contexto e automações com mais controle no ecossistema TOTVS/Protheus.",
 	"version": "0.0.1",
 	"license": "MIT",
-	"icon": "./plugins/engenharia/agente_implementador/assets/icon.png",
+	"icon": "./assets/icon.png",
 	"author": "Engenharia V&D",
 	"keywords": [
 			"poui",
@@ -15,40 +15,40 @@
 			"protheus-poui"
 		],
 	"skills": [
-			"./plugins/engenharia/agente_implementador/skills/ai-assisted-jira-flow",
-			"./plugins/engenharia/agente_implementador/skills/jira-attached-plan-flow",
-			"./plugins/engenharia/agente_implementador/skills/pr-validation-jira-azure-flow",
-			"./plugins/engenharia/agente_implementador/skills/superpowers"
-			],
-	"agents": [
-			"./plugins/engenharia/agente_implementador/agents/jira-context-researcher.agent.md",
-			"./plugins/engenharia/agente_implementador/agents/jira-delivery-scribe.agent.md",
-			"./plugins/engenharia/agente_implementador/agents/jira-flow.agent.md"
-			],
-	"mcpServers": {
-			"jira": {
-				"type": "http",
-				"url": "http://localhost:8000/mcp",
-				"headers": {
-					"Authorization": "Bearer uCdXsz3ZPEcpSGgv2LnAIxEknwATaliiCiA-rOK3szI"
-				}
-			},
-			"azure-devops-local": {
-				"type": "stdio",
-				"command": "npx",
-				"args": [
-						"-y",
-						"@azure-devops/mcp",
-						"${input:ado_org}",
-						"-d",
-						"core",
-						"repositories",
-						"pipelines",
-						"-a",
-						"azcli"
-					]
-			}
-			},
+			"./plugins/engenharia/poui/skills/api-design",
+			"./plugins/engenharia/poui/skills/poui-modal-password-recovery",
+			"./plugins/engenharia/poui/skills/poui-page-background",
+			"./plugins/engenharia/poui/skills/poui-page-blocked-user",
+			"./plugins/engenharia/poui/skills/poui-page-change-password",
+			"./plugins/engenharia/poui/skills/poui-page-customization-service",
+			"./plugins/engenharia/poui/skills/poui-page-dynamic-detail",
+			"./plugins/engenharia/poui/skills/poui-page-dynamic-edit",
+			"./plugins/engenharia/poui/skills/poui-page-dynamic-search",
+			"./plugins/engenharia/poui/skills/poui-page-dynamic-service",
+			"./plugins/engenharia/poui/skills/poui-page-dynamic-table",
+			"./plugins/engenharia/poui/skills/poui-page-job-scheduler",
+			"./plugins/engenharia/poui/skills/poui-page-login",
+			"./plugins/engenharia/poui/skills/poui-templates-overview",
+			"./plugins/engenharia/poui/skills/poui-templates-utils",
+			"./plugins/engenharia/poui/skills/create-project"
+		],
+		"agents": [
+			"./plugins/engenharia/poui/agents/architect-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/bug-fixer.agent.md",
+			"./plugins/engenharia/poui/agents/code-reviewer.agent.md",
+			"./plugins/engenharia/poui/agents/devops-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/documentation-writer.agent.md",
+			"./plugins/engenharia/poui/agents/feature-developer.agent.md",
+			"./plugins/engenharia/poui/agents/frontend-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/performance-optimizer.agent.md",
+			"./plugins/engenharia/poui/agents/poui-context.agent.md",
+			"./plugins/engenharia/poui/agents/project-creator.agent.md",
+			"./plugins/engenharia/poui/agents/refactoring-specialist.agent.md",
+			"./plugins/engenharia/poui/agents/security-auditor.agent.md",
+			"./plugins/engenharia/poui/agents/superpowers.agent.md",
+			"./plugins/engenharia/poui/agents/test-writer.agent.md"
+		],
+		"mcpServers": {},
 		"hooks": {},
 		"repository": "https://github.com/everson-junior/engenharia-ved-plugins"
 }
